@@ -288,10 +288,10 @@ const Editor = () => {
 
         {/* Main Editor Area */}
         <main
-          className={`flex-1 overflow-y-auto p-6 md:p-12 transition-all duration-500 ${showPreviewMobile ? "hidden" : "block"}`}
+          className={`flex-1 overflow-y-auto p-4 md:p-8 transition-all duration-500 ${showPreviewMobile ? "hidden" : "block"}`}
         >
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-[2.5rem] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] border border-gray-100 p-8 md:p-12 relative overflow-hidden text-left">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-white rounded-[2.5rem] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 md:p-10 relative overflow-hidden text-left">
               {/* Decorative Gradient Line */}
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-600 via-indigo-600 to-purple-600 opacity-80"></div>
               {renderSection()}

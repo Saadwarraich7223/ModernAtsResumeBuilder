@@ -6,6 +6,8 @@ import ProfessionalTemplate from './ProfessionalTemplate';
 import ExecutiveTemplate from './ExecutiveTemplate';
 import TechnologistTemplate from './TechnologistTemplate';
 import CompactTemplate from './CompactTemplate';
+import CreativeProTemplate from './CreativeProTemplate';
+import ClassicSerifTemplate from './ClassicSerifTemplate';
 import { getThemeById } from '../themes/themeConfig';
 
 const TemplateRenderer = ({ templateId, data, settings }) => {
@@ -17,6 +19,8 @@ const TemplateRenderer = ({ templateId, data, settings }) => {
     'executive-1': ExecutiveTemplate,
     'tech-1': TechnologistTemplate,
     'compact-1': CompactTemplate,
+    'creative-pro-1': CreativeProTemplate,
+    'classic-serif-1': ClassicSerifTemplate,
   };
 
   const SelectedTemplate = templates[templateId] || MinimalTemplate;

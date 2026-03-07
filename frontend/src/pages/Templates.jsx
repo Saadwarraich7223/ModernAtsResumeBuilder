@@ -10,7 +10,8 @@ import {
   CheckCircle2,
   FileText,
   Code,
-  Zap
+  Zap,
+  PenTool
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import useResumeStore from '../store/resumeStore';
@@ -21,7 +22,7 @@ const categories = [
   { id: 'minimal', name: 'Minimal' },
   { id: 'professional', name: 'Professional' },
   { id: 'creative', name: 'Creative' },
-  { id: 'tech', name: 'Tech & High-Density' },
+  { id: 'tech', name: 'Tech & Logic' },
 ];
 
 const allTemplates = [
@@ -50,12 +51,28 @@ const allTemplates = [
     tag: 'Stylish'
   },
   { 
+    id: 'creative-pro-1', 
+    name: 'Designer Pro', 
+    category: 'creative',
+    description: 'High-impact layout with modern patterns.',
+    image: 'https://images.unsplash.com/photo-1509343256512-d77a5cb3791b?auto=format&fit=crop&q=80&w=600&h=800',
+    tag: 'Impact'
+  },
+  { 
     id: 'professional-1', 
     name: 'Corporate Pro', 
     category: 'professional',
     description: 'Structured layout for experienced professionals.',
     image: 'https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?auto=format&fit=crop&q=80&w=600&h=800',
     tag: 'ATS-Ready'
+  },
+  { 
+    id: 'classic-serif-1', 
+    name: 'Classic Serif', 
+    category: 'minimal',
+    description: 'Traditional academic and legal style.',
+    image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600&h=800',
+    tag: 'Academic'
   },
   { 
     id: 'executive-1', 
@@ -98,7 +115,7 @@ const Templates = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans selection:bg-primary-100 relative">
+    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans selection:bg-primary-100 relative text-left">
       {/* SaaS Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 via-white to-purple-50/30"></div>
@@ -107,12 +124,12 @@ const Templates = () => {
 
       {/* Navbar */}
       <nav className="sticky top-0 w-full bg-white/60 backdrop-blur-xl border-b border-gray-100/50 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
-              <FileText className="text-white" size={20} />
+        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center text-left">
+          <div className="flex items-center gap-2.5 cursor-pointer text-left" onClick={() => navigate('/')}>
+            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 text-left">
+              <FileText className="text-white text-left" size={20} />
             </div>
-            <span className="text-xl font-bold tracking-tight text-gray-900">ResumeBuilder</span>
+            <span className="text-xl font-bold tracking-tight text-gray-900 text-left">ResumeBuilder</span>
           </div>
           
           <Button variant="secondary" size="md" className="rounded-full px-6" onClick={() => navigate('/editor')}>
@@ -121,7 +138,7 @@ const Templates = () => {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 py-20">
+      <main className="max-w-7xl mx-auto px-6 py-20 text-left">
         <div className="text-center mb-16 space-y-4">
            <h1 className="text-4xl lg:text-6xl font-black tracking-tighter text-gray-900">
              Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600">Perfect Design</span>
@@ -150,9 +167,9 @@ const Templates = () => {
         </div>
 
         {/* Templates Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 text-left">
           {filteredTemplates.map((tpl, idx) => (
-            <div key={idx} className="group animate-fade-in" style={{ animationDelay: `${idx * 100}ms` }}>
+            <div key={idx} className="group animate-fade-in text-left" style={{ animationDelay: `${idx * 100}ms` }}>
               <div className="relative aspect-[3/4] rounded-[2.5rem] overflow-hidden bg-white shadow-lg border border-gray-100 group-hover:shadow-2xl group-hover:-translate-y-4 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
                 <img src={tpl.image} alt={tpl.name} className="w-full h-full object-cover grayscale-[15%] group-hover:grayscale-0 transition-all duration-700" />
                 
@@ -164,7 +181,7 @@ const Templates = () => {
 
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center p-12">
                   <div className="text-white text-center space-y-6">
-                     <p className="font-medium text-gray-200 leading-relaxed">{tpl.description}</p>
+                     <p className="font-medium text-gray-200 leading-relaxed text-center">{tpl.description}</p>
                      <Button 
                        variant="gradient" 
                        size="lg" 
@@ -176,10 +193,10 @@ const Templates = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-8 flex justify-between items-center px-4">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{tpl.name}</h3>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{tpl.category}</p>
+              <div className="mt-8 flex justify-between items-center px-4 text-left">
+                <div className="text-left">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1 text-left">{tpl.name}</h3>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">{tpl.category}</p>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 opacity-0 group-hover:opacity-100 transition-opacity">
                    <ArrowRight size={20} />
@@ -191,13 +208,13 @@ const Templates = () => {
       </main>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 max-w-7xl mx-auto">
-        <div className="bg-white rounded-[3rem] p-12 lg:p-20 text-center border border-gray-100 shadow-xl relative overflow-hidden">
+      <section className="py-20 px-6 max-w-7xl mx-auto text-left">
+        <div className="bg-white rounded-[3rem] p-12 lg:p-20 text-center border border-gray-100 shadow-xl relative overflow-hidden mx-auto">
            <div className="absolute top-0 left-0 w-32 h-32 bg-primary-100/30 blur-3xl rounded-full"></div>
-           <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-6 tracking-tight relative z-10">
+           <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-6 tracking-tight relative z-10 text-center">
              Not sure which one to pick?
            </h2>
-           <p className="text-gray-500 max-w-xl mx-auto mb-10 font-medium relative z-10">
+           <p className="text-gray-500 max-w-xl mx-auto mb-10 font-medium relative z-10 text-center">
              You can change your template at any time within the editor without losing your progress. 
              Experiment and find your perfect fit!
            </p>
@@ -209,7 +226,7 @@ const Templates = () => {
 
       {/* Footer (Minimal) */}
       <footer className="py-12 border-t border-gray-100 text-center">
-         <p className="text-sm font-bold text-gray-400 uppercase tracking-widest italic">© 2026 ResumeBuilder. All Rights Reserved.</p>
+         <p className="text-sm font-bold text-gray-400 uppercase tracking-widest italic text-center">© 2026 ResumeBuilder. All Rights Reserved.</p>
       </footer>
     </div>
   );
