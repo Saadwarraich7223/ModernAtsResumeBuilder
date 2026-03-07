@@ -128,7 +128,18 @@ const useResumeStore = create((set, get) => ({
     }
   },
 
-  resetResume: () => set(initialState),
+  resetResume: (preserveState = false) => {
+    if (preserveState) {
+      set((state) => ({
+        ...initialState,
+        templateId: state.templateId,
+        settings: state.settings,
+        resumes: state.resumes,
+      }));
+    } else {
+      set(initialState);
+    }
+  },
 }));
 
 export default useResumeStore;

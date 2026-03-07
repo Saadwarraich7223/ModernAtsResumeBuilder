@@ -8,6 +8,7 @@ A premium, open-source, and unlimited Resume Builder Web App. Build professional
 
 - **💎 Premium UI/UX:** Stunning SaaS-style design with soft gradients, smooth animations, and a clutter-free interface.
 - **📊 User Dashboard:** Centralized workspace to manage, edit, and duplicate multiple resumes.
+- **📝 Section Management:** Toggle optional sections (Projects, Certifications, Languages) or create entirely custom ones (e.g., Volunteering).
 - **🔐 Secure Auth:** JWT-based authentication system with persistent sessions.
 - **⚡ Live Preview Editor:** Real-time feedback with integrated A4 paper preview and zoom controls (40% to 150%).
 - **🎨 Dynamic Theme System:**
@@ -61,7 +62,8 @@ A premium, open-source, and unlimited Resume Builder Web App. Build professional
 - [x] Phase 12: Auto Resume AI Assistant (OpenRouter)
 - [x] Phase 13: Dynamic Theme System & Visual Engine
 - [x] Phase 14: User Dashboard & Multi-Resume Management
-- [ ] Phase 15: Custom Sections & Advanced Export Options (Next)
+- [x] Phase 15: Section Management & Custom Sections
+- [ ] Phase 16: Public Sharing & Advanced Export (Next)
 
 ---
 Built with precision by the open-source community.

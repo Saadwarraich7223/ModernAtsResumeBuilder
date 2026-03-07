@@ -32,7 +32,7 @@ const Dashboard = () => {
   }, [user, navigate, fetchResumes]);
 
   const handleCreateNew = () => {
-    resetResume();
+    resetResume(false); // Full reset for new from scratch
     navigate('/editor');
   };
 

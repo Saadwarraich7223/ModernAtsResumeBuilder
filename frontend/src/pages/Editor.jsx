@@ -18,7 +18,11 @@ import {
   Eye,
   Sparkles,
   ShieldCheck,
-  X
+  X,
+  FolderGit2,
+  Award,
+  Languages as LangIcon,
+  GripVertical
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
@@ -34,8 +38,13 @@ import Education from "../components/editor/Education";
 import Skills from "../components/editor/Skills";
 import Settings from "../components/editor/Settings";
 import ATSAnalysis from "../components/editor/ATSAnalysis";
+import Projects from "../components/editor/Projects";
+import Certifications from "../components/editor/Certifications";
+import Languages from "../components/editor/Languages";
+import CustomSections from "../components/editor/CustomSections";
+import SectionManager from "../components/editor/SectionManager";
 
-const sections = [
+const baseSections = [
   { id: "import", label: "Import", icon: FileUp },
   { id: "templates", label: "Templates", icon: Palette },
   { id: "personal", label: "Personal Info", icon: User },
@@ -43,7 +52,18 @@ const sections = [
   { id: "experience", label: "Experience", icon: Briefcase },
   { id: "education", label: "Education", icon: GraduationCap },
   { id: "skills", label: "Skills", icon: Code },
+];
+
+const optionalSectionsMap = {
+  projects: { id: "projects", label: "Projects", icon: FolderGit2 },
+  certifications: { id: "certifications", label: "Certifications", icon: Award },
+  languages: { id: "languages", label: "Languages", icon: LangIcon },
+  custom: { id: "custom", label: "Custom Sections", icon: Layout },
+};
+
+const fixedBottomSections = [
   { id: "ats", label: "ATS AI Scan", icon: ShieldCheck },
+  { id: "manager", label: "Manage Sections", icon: GripVertical },
   { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
 
@@ -55,16 +75,28 @@ const Editor = () => {
 
   const [activeSection, setActiveSection] = useState("personal");
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
-  const { saveResume, title, setTitle, data, loadResume, resetResume } = useResumeStore();
+  const { saveResume, title, setTitle, data, loadResume, resetResume, settings } = useResumeStore();
   const resumeRef = useRef(null);
+
+  const visibleOptionalIds = settings.visibleSections || ['projects', 'certifications', 'languages', 'custom'];
+  
+  const dynamicSections = useMemo(() => {
+    const optionals = visibleOptionalIds.map(id => optionalSectionsMap[id]).filter(Boolean);
+    return [...baseSections, ...optionals, ...fixedBottomSections];
+  }, [visibleOptionalIds]);
 
   useEffect(() => {
     if (resumeId) {
       loadResume(resumeId);
     } else {
-      resetResume();
+      // If we are starting new, we might have already selected a template 
+      // on the Templates page. We want to keep that templateId.
+      resetResume(true);
     }
-  }, [resumeId, loadResume, resetResume]);
+
+    // Cleanup on unmount if needed, but here we just want to ensure 
+    // we don't reset state when we shouldn't.
+  }, [resumeId]); // Remove loadResume/resetResume from deps to avoid re-runs on state changes
 
   const handlePrint = useReactToPrint({
     contentRef: resumeRef,
@@ -94,43 +126,35 @@ const Editor = () => {
 
   const isSectionComplete = (id) => {
     switch (id) {
-      case "personal":
-        return !!data.personalInfo.fullName;
-      case "summary":
-        return !!data.summary;
-      case "experience":
-        return data.workExperience?.length > 0;
-      case "education":
-        return data.education?.length > 0;
-      case "skills":
-        return data.skills?.length > 0;
-      default:
-        return true;
+      case "personal": return !!data.personalInfo.fullName;
+      case "summary": return !!data.summary;
+      case "experience": return data.workExperience?.length > 0;
+      case "education": return data.education?.length > 0;
+      case "skills": return data.skills?.length > 0;
+      case "projects": return data.projects?.length > 0;
+      case "certifications": return data.certifications?.length > 0;
+      case "languages": return data.languages?.length > 0;
+      default: return true;
     }
   };
 
   const renderSection = () => {
     switch (activeSection) {
-      case "import":
-        return <ResumeImport />;
-      case "templates":
-        return <TemplateSelector />;
-      case "personal":
-        return <PersonalInfo />;
-      case "summary":
-        return <Summary />;
-      case "experience":
-        return <Experience />;
-      case "education":
-        return <Education />;
-      case "skills":
-        return <Skills />;
-      case "ats":
-        return <ATSAnalysis />;
-      case "settings":
-        return <Settings />;
-      default:
-        return <PersonalInfo />;
+      case "import": return <ResumeImport />;
+      case "templates": return <TemplateSelector />;
+      case "personal": return <PersonalInfo />;
+      case "summary": return <Summary />;
+      case "experience": return <Experience />;
+      case "education": return <Education />;
+      case "skills": return <Skills />;
+      case "projects": return <Projects />;
+      case "certifications": return <Certifications />;
+      case "languages": return <Languages />;
+      case "custom": return <CustomSections />;
+      case "manager": return <SectionManager />;
+      case "ats": return <ATSAnalysis />;
+      case "settings": return <Settings />;
+      default: return <PersonalInfo />;
     }
   };
 
@@ -157,7 +181,7 @@ const Editor = () => {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-transparent border-none p-0 text-lg font-black tracking-tight text-gray-900 focus:ring-0 w-full max-w-[200px] md:max-w-md text-left"
+              className="bg-transparent border-none p-0 text-lg font-black tracking-tight text-gray-900 focus:ring-0 w-full max-w-[200px] md:max-w-md text-left outline-none"
               placeholder="Resume Title..."
             />
             <div className="flex items-center gap-2 mt-0.5 text-left">
@@ -204,8 +228,9 @@ const Editor = () => {
         {/* Sidebar */}
         <aside className="w-20 md:w-72 bg-white border-r border-gray-100 flex flex-col py-8 z-20 text-left">
           <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-hide text-left">
-            {sections.map((section) => {
+            {dynamicSections.map((section) => {
               const complete = isSectionComplete(section.id);
+              const isOptional = !!optionalSectionsMap[section.id];
               return (
                 <button
                   key={section.id}
@@ -224,12 +249,13 @@ const Editor = () => {
                   >
                     <section.icon size={22} />
                   </div>
-                  <span className="hidden md:block flex-1 text-left">
+                  <span className="hidden md:block flex-1 text-left truncate">
                     {section.label}
                   </span>
                   {complete &&
                     section.id !== "import" &&
-                    section.id !== "settings" && (
+                    section.id !== "settings" &&
+                    section.id !== "manager" && (
                       <CheckCircle2
                         size={16}
                         className={`hidden md:block ${activeSection === section.id ? "text-white/80" : "text-emerald-500"}`}
@@ -247,10 +273,10 @@ const Editor = () => {
           <div className="px-6 mt-6 hidden md:block">
             <div className="p-5 bg-indigo-50 rounded-3xl border border-indigo-100 space-y-3 relative overflow-hidden group text-left">
               <div className="absolute -top-4 -right-4 w-16 h-16 bg-indigo-200/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
-              <p className="text-xs font-black text-indigo-900 uppercase tracking-widest flex items-center gap-2">
+              <p className="text-xs font-black text-indigo-900 uppercase tracking-widest flex items-center gap-2 text-left">
                 <Sparkles size={14} /> AI Power Active
               </p>
-              <p className="text-[11px] text-indigo-700/80 font-bold leading-relaxed">
+              <p className="text-[11px] text-indigo-700/80 font-bold leading-relaxed text-left">
                 Powered by OpenAI GPT-4o-mini for premium resume generation.
               </p>
               <button onClick={() => setActiveSection('ats')} className="text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1">
