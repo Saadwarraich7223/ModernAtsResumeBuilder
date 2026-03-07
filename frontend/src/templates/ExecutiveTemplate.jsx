@@ -1,24 +1,30 @@
 import React from 'react';
 
-const ExecutiveTemplate = ({ data, settings }) => {
+const ExecutiveTemplate = ({ data, settings, theme }) => {
   const { personalInfo, summary, workExperience, education, skills } = data;
 
   return (
     <div 
-      className="p-[20mm] bg-white min-h-[297mm] border-[12px] border-double border-gray-100"
+      className="min-h-[297mm] border-[16px] border-double"
       style={{
         fontFamily: settings.fontFamily,
         fontSize: settings.fontSize,
-        color: '#2d3748',
-        lineHeight: '1.6',
+        lineHeight: settings.lineHeight,
+        padding: '15mm',
+        backgroundColor: theme.background,
+        color: theme.text,
+        borderColor: theme.secondary
       }}
     >
       {/* Header */}
       <header className="text-center mb-12">
-        <h1 className="text-5xl font-serif font-black text-gray-900 tracking-tight mb-3">
+        <h1 className="text-5xl font-black tracking-tighter mb-4 uppercase" style={{ color: theme.heading }}>
           {personalInfo.fullName || 'Your Name'}
         </h1>
-        <div className="flex justify-center flex-wrap gap-x-6 gap-y-2 text-sm font-bold text-primary-700 uppercase tracking-[0.2em] border-y border-gray-100 py-4">
+        <div 
+          className="flex justify-center flex-wrap gap-x-8 gap-y-2 text-[10px] font-black uppercase tracking-[0.3em] py-4 border-y-2" 
+          style={{ borderColor: theme.secondary, color: theme.accent }}
+        >
           {personalInfo.email && <span>{personalInfo.email}</span>}
           {personalInfo.phone && <span>{personalInfo.phone}</span>}
           {personalInfo.address && <span>{personalInfo.address}</span>}
@@ -28,7 +34,7 @@ const ExecutiveTemplate = ({ data, settings }) => {
       {/* Summary */}
       {summary && (
         <section className="mb-12">
-          <p className="text-center italic text-lg text-gray-600 font-medium max-w-3xl mx-auto leading-relaxed">
+          <p className="text-center italic text-lg font-medium max-w-3xl mx-auto leading-relaxed opacity-90">
             "{summary}"
           </p>
         </section>
@@ -37,20 +43,20 @@ const ExecutiveTemplate = ({ data, settings }) => {
       {/* Experience */}
       {workExperience?.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-center text-sm font-black uppercase tracking-[0.3em] text-gray-400 mb-8 flex items-center gap-6">
-            <div className="h-px flex-1 bg-gray-100"></div>
+          <h2 className="text-center text-[10px] font-black uppercase tracking-[0.4em] mb-10 flex items-center gap-8 opacity-40">
+            <div className="h-px flex-1" style={{ backgroundColor: theme.secondary }}></div>
             Professional Experience
-            <div className="h-px flex-1 bg-gray-100"></div>
+            <div className="h-px flex-1" style={{ backgroundColor: theme.secondary }}></div>
           </h2>
-          <div className="space-y-10">
+          <div className="space-y-12">
             {workExperience.map((exp, i) => (
               <div key={i}>
                 <div className="flex justify-between items-baseline mb-2">
-                  <h3 className="text-xl font-bold text-gray-900">{exp.company}</h3>
-                  <span className="text-sm font-bold text-gray-400 italic">{exp.startDate} — {exp.current ? 'Present' : exp.endDate}</span>
+                  <h3 className="text-xl font-black uppercase tracking-tight" style={{ color: theme.heading }}>{exp.company}</h3>
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40 italic">{exp.startDate} — {exp.current ? 'Present' : exp.endDate}</span>
                 </div>
-                <p className="text-lg font-bold text-primary-800 mb-4">{exp.position}</p>
-                <p className="text-gray-600 whitespace-pre-wrap leading-relaxed border-l-2 border-gray-50 pl-6 ml-1">
+                <p className="text-sm font-bold uppercase tracking-widest mb-4" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>{exp.position}</p>
+                <p className="text-sm font-medium opacity-80 whitespace-pre-wrap leading-relaxed border-l-4 pl-8" style={{ borderColor: theme.secondary }}>
                   {exp.description}
                 </p>
               </div>
@@ -63,13 +69,13 @@ const ExecutiveTemplate = ({ data, settings }) => {
         {/* Education */}
         {education?.length > 0 && (
           <section>
-            <h2 className="text-sm font-black uppercase tracking-[0.3em] text-gray-400 mb-6 border-b pb-2">Academic History</h2>
-            <div className="space-y-6">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-6 pb-2 border-b-2 opacity-40" style={{ borderColor: theme.secondary }}>Education</h2>
+            <div className="space-y-8">
               {education.map((edu, i) => (
                 <div key={i}>
-                  <p className="font-bold text-gray-900 mb-1">{edu.degree}</p>
-                  <p className="text-sm text-gray-600">{edu.school}</p>
-                  <p className="text-xs font-bold text-primary-700 mt-1">{edu.endDate}</p>
+                  <p className="font-black text-gray-900 uppercase tracking-tight text-sm" style={{ color: theme.heading }}>{edu.degree}</p>
+                  <p className="text-xs font-bold opacity-70 mt-1">{edu.school}</p>
+                  <p className="text-[10px] font-black mt-2 uppercase tracking-widest" style={{ color: theme.accent }}>{edu.endDate}</p>
                 </div>
               ))}
             </div>
@@ -79,12 +85,12 @@ const ExecutiveTemplate = ({ data, settings }) => {
         {/* Skills */}
         {skills?.length > 0 && (
           <section>
-            <h2 className="text-sm font-black uppercase tracking-[0.3em] text-gray-400 mb-6 border-b pb-2">Core Competencies</h2>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-6 pb-2 border-b-2 opacity-40" style={{ borderColor: theme.secondary }}>Competencies</h2>
+            <div className="grid grid-cols-1 gap-y-3">
               {skills.map((skill, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-primary-600"></div>
-                  <span className="text-sm font-bold text-gray-700">{skill.name}</span>
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-1 h-1 rounded-full" style={{ backgroundColor: theme.accent }}></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-80">{skill.name}</span>
                 </div>
               ))}
             </div>

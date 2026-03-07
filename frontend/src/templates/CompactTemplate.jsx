@@ -1,65 +1,67 @@
 import React from 'react';
 
-const CompactTemplate = ({ data, settings }) => {
+const CompactTemplate = ({ data, settings, theme }) => {
   const { personalInfo, summary, workExperience, education, skills } = data;
 
   return (
     <div 
-      className="bg-white min-h-[297mm]"
+      className="min-h-[297mm]"
       style={{
         fontFamily: settings.fontFamily,
         fontSize: settings.fontSize,
         lineHeight: '1.2',
-        padding: '10mm', // Overriding for high density
+        padding: '10mm',
+        backgroundColor: theme.background,
+        color: theme.text
       }}
     >
-      <header className="flex justify-between items-start border-b border-gray-900 pb-2 mb-4">
+      <header className="flex justify-between items-start border-b-2 pb-2 mb-4" style={{ borderColor: theme.heading }}>
         <div>
-          <h1 className="text-2xl font-black uppercase tracking-tighter text-gray-900">{personalInfo.fullName || 'Name'}</h1>
-          <p className="text-sm font-bold" style={{ color: settings.colorScheme }}>{personalInfo.jobTitle}</p>
+          <h1 className="text-2xl font-black uppercase tracking-tighter" style={{ color: theme.heading }}>{personalInfo.fullName || 'Name'}</h1>
+          <p className="text-xs font-black uppercase tracking-widest" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>{personalInfo.jobTitle}</p>
         </div>
-        <div className="text-right text-[10px] font-medium text-gray-600">
+        <div className="text-right text-[9px] font-black uppercase tracking-tight opacity-60">
           <p>{personalInfo.email} | {personalInfo.phone}</p>
           <p>{personalInfo.address} | {personalInfo.linkedin}</p>
         </div>
       </header>
 
       {summary && (
-        <section className="mb-4 text-[11px] leading-tight text-gray-700">
+        <section className="mb-4 text-[10px] leading-tight opacity-90 text-justify">
           <p>{summary}</p>
         </section>
       )}
 
       <div className="space-y-4">
         <section>
-          <h2 className="text-[10px] font-black uppercase border-b border-gray-200 mb-2 tracking-widest bg-gray-50 px-1 py-0.5">Experience</h2>
+          <h2 className="text-[9px] font-black uppercase border-b mb-2 tracking-[0.2em] px-1 py-0.5" style={{ color: theme.heading, backgroundColor: theme.secondary, borderColor: theme.primary }}>Experience</h2>
           <div className="space-y-3">
             {workExperience.map((exp, i) => (
               <div key={i}>
-                <div className="flex justify-between font-bold text-[11px] text-gray-900">
-                  <span>{exp.position} // {exp.company}</span>
-                  <span className="italic text-gray-500 font-medium">{exp.startDate} - {exp.endDate}</span>
+                <div className="flex justify-between font-black text-[10px]" style={{ color: theme.heading }}>
+                  <span className="uppercase tracking-tight">{exp.position} // {exp.company}</span>
+                  <span className="opacity-40 uppercase tracking-tighter">{exp.startDate} - {exp.endDate}</span>
                 </div>
-                <p className="text-[10px] text-gray-600 whitespace-pre-wrap mt-0.5">{exp.description}</p>
+                <p className="text-[9px] opacity-80 whitespace-pre-wrap mt-0.5 leading-snug">{exp.description}</p>
               </div>
             ))}
           </div>
         </section>
 
         <section>
-          <h2 className="text-[10px] font-black uppercase border-b border-gray-200 mb-2 tracking-widest bg-gray-50 px-1 py-0.5">Education & Expertise</h2>
+          <h2 className="text-[9px] font-black uppercase border-b mb-2 tracking-[0.2em] px-1 py-0.5" style={{ color: theme.heading, backgroundColor: theme.secondary, borderColor: theme.primary }}>Education & Expertise</h2>
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-2">
               {education.map((edu, i) => (
-                <div key={i} className="text-[10px]">
-                  <p className="font-bold text-gray-800">{edu.degree}</p>
-                  <p className="text-gray-500">{edu.school} ({edu.endDate})</p>
+                <div key={i} className="text-[9px]">
+                  <p className="font-black uppercase tracking-tight" style={{ color: theme.heading }}>{edu.degree}</p>
+                  <p className="opacity-60 font-bold uppercase tracking-tighter">{edu.school} ({edu.endDate})</p>
                 </div>
               ))}
             </div>
             <div className="flex flex-wrap gap-x-2 gap-y-1 content-start">
               {skills.map((skill, i) => (
-                <span key={i} className="text-[10px] font-bold text-gray-700 border-r border-gray-300 pr-2 last:border-0">
+                <span key={i} className="text-[9px] font-black uppercase tracking-tighter border-r pr-2 last:border-0" style={{ color: theme.accent, borderColor: theme.secondary }}>
                   {skill.name}
                 </span>
               ))}

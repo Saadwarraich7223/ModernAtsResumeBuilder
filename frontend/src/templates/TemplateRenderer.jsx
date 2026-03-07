@@ -6,6 +6,7 @@ import ProfessionalTemplate from './ProfessionalTemplate';
 import ExecutiveTemplate from './ExecutiveTemplate';
 import TechnologistTemplate from './TechnologistTemplate';
 import CompactTemplate from './CompactTemplate';
+import { getThemeById } from '../themes/themeConfig';
 
 const TemplateRenderer = ({ templateId, data, settings }) => {
   const templates = {
@@ -19,8 +20,9 @@ const TemplateRenderer = ({ templateId, data, settings }) => {
   };
 
   const SelectedTemplate = templates[templateId] || MinimalTemplate;
+  const theme = getThemeById(settings.themeId);
 
-  return <SelectedTemplate data={data} settings={settings} />;
+  return <SelectedTemplate data={data} settings={settings} theme={theme} />;
 };
 
 export default TemplateRenderer;

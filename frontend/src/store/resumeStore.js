@@ -27,6 +27,7 @@ const initialState = {
   },
   templateId: 'minimal-1',
   settings: {
+    themeId: 'classic-blue',
     fontSize: '12px',
     fontFamily: 'Inter',
     colorScheme: '#000000',
