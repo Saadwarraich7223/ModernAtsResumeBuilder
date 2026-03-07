@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import {
   User,
   FileText,
@@ -18,9 +18,9 @@ import {
   Eye,
   Sparkles,
   ShieldCheck,
-  X,
+  X
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import useResumeStore from "../store/resumeStore";
 import PersonalInfo from "../components/editor/PersonalInfo";
@@ -49,15 +49,34 @@ const sections = [
 
 const Editor = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const resumeId = queryParams.get('id');
+
   const [activeSection, setActiveSection] = useState("personal");
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
-  const { saveResume, title, setTitle, data } = useResumeStore();
+  const { saveResume, title, setTitle, data, loadResume, resetResume } = useResumeStore();
   const resumeRef = useRef(null);
+
+  useEffect(() => {
+    if (resumeId) {
+      loadResume(resumeId);
+    } else {
+      resetResume();
+    }
+  }, [resumeId, loadResume, resetResume]);
 
   const handlePrint = useReactToPrint({
     contentRef: resumeRef,
     documentTitle: title || "My_Resume",
   });
+
+  const handleSave = async () => {
+    const id = await saveResume(resumeId);
+    if (!resumeId && id) {
+      navigate(`/editor?id=${id}`, { replace: true });
+    }
+  };
 
   // Progress Calculation
   const progress = useMemo(() => {
@@ -127,7 +146,7 @@ const Editor = () => {
       <header className="flex items-center justify-between px-6 h-20 bg-white/70 backdrop-blur-2xl border-b border-gray-100 z-30 text-left">
         <div className="flex items-center gap-6 flex-1 text-left">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
             className="p-2 hover:bg-gray-100 rounded-xl text-gray-400 transition-colors"
           >
             <ArrowLeft size={20} />
@@ -174,7 +193,7 @@ const Editor = () => {
             variant="gradient"
             size="md"
             className="rounded-full px-8 shadow-lg shadow-primary-500/20"
-            onClick={() => saveResume()}
+            onClick={handleSave}
           >
             <Save size={18} className="mr-2" /> Save
           </Button>
@@ -183,7 +202,7 @@ const Editor = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-30 md:w-60 bg-white border-r border-gray-100 flex flex-col py-8 z-20 text-left">
+        <aside className="w-20 md:w-72 bg-white border-r border-gray-100 flex flex-col py-8 z-20 text-left">
           <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-hide text-left">
             {sections.map((section) => {
               const complete = isSectionComplete(section.id);
@@ -234,10 +253,7 @@ const Editor = () => {
               <p className="text-[11px] text-indigo-700/80 font-bold leading-relaxed">
                 Powered by OpenAI GPT-4o-mini for premium resume generation.
               </p>
-              <button
-                onClick={() => setActiveSection("ats")}
-                className="text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1"
-              >
+              <button onClick={() => setActiveSection('ats')} className="text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1">
                 Run ATS Scan <ChevronRight size={12} />
               </button>
             </div>
@@ -246,10 +262,10 @@ const Editor = () => {
 
         {/* Main Editor Area */}
         <main
-          className={`flex-1 overflow-y-auto p-2  md:p-4 transition-all duration-500 ${showPreviewMobile ? "hidden" : "block"}`}
+          className={`flex-1 overflow-y-auto p-6 md:p-12 transition-all duration-500 ${showPreviewMobile ? "hidden" : "block"}`}
         >
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-xl shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] border border-gray-100 p-2 md:p-4 relative overflow-hidden text-left">
+            <div className="bg-white rounded-[2.5rem] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] border border-gray-100 p-8 md:p-12 relative overflow-hidden text-left">
               {/* Decorative Gradient Line */}
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-600 via-indigo-600 to-purple-600 opacity-80"></div>
               {renderSection()}

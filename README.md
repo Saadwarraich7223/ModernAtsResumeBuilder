@@ -7,6 +7,8 @@ A premium, open-source, and unlimited Resume Builder Web App. Build professional
 ## ✨ Features
 
 - **💎 Premium UI/UX:** Stunning SaaS-style design with soft gradients, smooth animations, and a clutter-free interface.
+- **📊 User Dashboard:** Centralized workspace to manage, edit, and duplicate multiple resumes.
+- **🔐 Secure Auth:** JWT-based authentication system with persistent sessions.
 - **⚡ Live Preview Editor:** Real-time feedback with integrated A4 paper preview and zoom controls (40% to 150%).
 - **🎨 Dynamic Theme System:**
   - **8+ Pro Themes:** Instant visual transformation across 3 categories (Light, Minimal, Modern).
@@ -17,22 +19,21 @@ A premium, open-source, and unlimited Resume Builder Web App. Build professional
   - **ATS Scan:** Identify missing keywords and optimize for recruitment software.
 - **🤖 Smart Import:** Pattern-based text matching to quickly populate your resume details.
 - **📚 7+ Professional Templates:** Categorized designs (Modern, Minimal, Professional, Creative, Tech, Compact).
-- **📊 Progress Intelligence:** Real-time tracking of section completion with visual feedback.
 - **📄 High-Fidelity Export:** One-click, high-resolution PDF generation.
 
 ## 🛠️ Tech Stack
 
 - **Frontend:** React 18, Vite, Tailwind CSS 4, Zustand, Axios, Lucide React.
 - **Backend:** Node.js, Express, MongoDB (Mongoose).
-- **AI Engine:** OpenRouter (Mistral-7B-Instruct Free Tier).
+- **AI Engine:** OpenRouter (Mistral-Instruct Free Tier) proxied via backend.
 - **Export:** `react-to-print` for professional client-side rendering.
 
 ## 📁 Project Structure
 
 ```text
 /resume-builder
-  /backend     - Secure AI Proxy, Resume & User APIs
-  /frontend    - React Client, Theme Engine & Template Library
+  /backend     - Secure AI Proxy, Resume & User APIs, MongoDB Models
+  /frontend    - React Client, Dashboard, Editor & Theme Engine
   /docs        - Documentation and assets
 ```
 
@@ -43,7 +44,9 @@ A premium, open-source, and unlimited Resume Builder Web App. Build professional
    ```bash
    npm install # in both /backend and /frontend
    ```
-2. **Environment:** Add `OPENROUTER_API_KEY` and `MONGODB_URI` to `backend/.env`.
+2. **Environment:** 
+   - **Backend:** Add `OPENROUTER_API_KEY`, `MONGODB_URI`, `JWT_SECRET` and `HF_TOKEN` to `backend/.env`.
+   - **Frontend:** Add `VITE_API_URL` to `frontend/.env`.
 3. **Run:**
    ```bash
    # Backend
@@ -57,7 +60,8 @@ A premium, open-source, and unlimited Resume Builder Web App. Build professional
 - [x] Phase 1-11: Core Infrastructure & Progress Intelligence
 - [x] Phase 12: Auto Resume AI Assistant (OpenRouter)
 - [x] Phase 13: Dynamic Theme System & Visual Engine
-- [ ] Phase 14: User Dashboard & Multi-Resume Management (Next)
+- [x] Phase 14: User Dashboard & Multi-Resume Management
+- [ ] Phase 15: Custom Sections & Advanced Export Options (Next)
 
 ---
 Built with precision by the open-source community.

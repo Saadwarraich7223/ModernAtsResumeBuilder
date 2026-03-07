@@ -81,6 +81,16 @@ const useResumeStore = create((set, get) => ({
 
   setTitle: (title) => set({ title }),
 
+  fetchResumes: async () => {
+    set({ loading: true });
+    try {
+      const response = await api.get('/resumes');
+      set({ resumes: response.data, loading: false });
+    } catch (error) {
+      set({ error: 'Failed to fetch resumes', loading: false });
+    }
+  },
+
   loadResume: async (id) => {
     set({ loading: true });
     try {
@@ -96,13 +106,25 @@ const useResumeStore = create((set, get) => ({
     const { title, data, templateId, settings } = get();
     try {
       if (id) {
-        await api.put(`/resumes/${id}`, { title, data, templateId, settings });
+        const response = await api.put(`/resumes/${id}`, { title, data, templateId, settings });
+        return response.data._id;
       } else {
         const response = await api.post('/resumes', { title, data, templateId, settings });
         return response.data._id;
       }
     } catch (error) {
       set({ error: 'Failed to save resume' });
+    }
+  },
+
+  deleteResume: async (id) => {
+    try {
+      await api.delete(`/resumes/${id}`);
+      set((state) => ({
+        resumes: state.resumes.filter((r) => r._id !== id),
+      }));
+    } catch (error) {
+      set({ error: 'Failed to delete resume' });
     }
   },
 

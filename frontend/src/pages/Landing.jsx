@@ -17,14 +17,25 @@ import {
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import useResumeStore from "../store/resumeStore";
+import useAuthStore from "../store/authStore";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { setTemplateId } = useResumeStore();
+  const { setTemplateId, resetResume } = useResumeStore();
+  const { user } = useAuthStore();
 
   const handleSelectTemplate = (id) => {
+    resetResume();
     setTemplateId(id);
     navigate("/editor");
+  };
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/register');
+    }
   };
 
   const features = [
@@ -115,12 +126,12 @@ const Landing = () => {
 
       {/* Navbar */}
       <nav className="fixed top-0 w-full bg-white/70 backdrop-blur-2xl border-b border-gray-100/50 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
-              <FileText className="text-white" size={20} />
+        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center text-left">
+          <div className="flex items-center gap-2.5 text-left">
+            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 text-left">
+              <FileText className="text-white text-left" size={20} />
             </div>
-            <span className="text-xl font-bold tracking-tight text-gray-900">
+            <span className="text-xl font-bold tracking-tight text-gray-900 text-left">
               ResumeBuilder
             </span>
           </div>
@@ -128,18 +139,22 @@ const Landing = () => {
           <div className="hidden md:flex items-center gap-10">
             <a href="#features" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Features</a>
             <a href="#templates" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Templates</a>
-            <Link to="/login" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Sign In</Link>
-            <Button variant="gradient" size="md" className="rounded-full px-6" onClick={() => navigate("/editor")}>
-              Get Started
+            {user ? (
+              <Link to="/dashboard" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Dashboard</Link>
+            ) : (
+              <Link to="/login" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Sign In</Link>
+            )}
+            <Button variant="gradient" size="md" className="rounded-full px-6" onClick={handleGetStarted}>
+              {user ? 'Dashboard' : 'Get Started'}
             </Button>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-44 pb-24 lg:pt-56 lg:pb-32 overflow-hidden">
+      <section className="pt-44 pb-24 lg:pt-56 lg:pb-32 overflow-hidden text-left">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-100 shadow-sm text-gray-600 text-xs font-bold uppercase tracking-wider mb-8 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-100 shadow-sm text-gray-600 text-xs font-bold uppercase tracking-wider mb-8 animate-fade-in mx-auto">
             <Sparkles size={14} className="text-amber-500" />
             Empowering Your Career Journey
           </div>
@@ -156,14 +171,14 @@ const Landing = () => {
             costs. Just professional results in minutes.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mx-auto">
             <Button
               variant="gradient"
               size="lg"
               className="w-full sm:w-auto h-14 px-10 text-lg gap-2 rounded-full"
-              onClick={() => navigate("/editor")}
+              onClick={handleGetStarted}
             >
-              Create My Resume <ArrowRight size={20} />
+              {user ? 'Go to Dashboard' : 'Create My Resume'} <ArrowRight size={20} />
             </Button>
             <Button
               variant="secondary"
@@ -219,12 +234,12 @@ const Landing = () => {
               </div>
             </div>
             {/* Interactive elements */}
-            <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-48 bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 hidden lg:block animate-slide-up">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+            <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-48 bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 hidden lg:block animate-slide-up text-left">
+              <div className="flex items-center gap-3 mb-3 text-left">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg text-left">
                   <CheckCircle size={18} />
                 </div>
-                <span className="text-sm font-bold">ATS Scored: 98%</span>
+                <span className="text-sm font-bold text-left">ATS Scored: 98%</span>
               </div>
               <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
                 <div className="h-full w-[98%] bg-emerald-500"></div>
@@ -235,33 +250,33 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-32">
+      <section id="features" className="py-32 text-left">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
               Focus on what matters.
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg font-medium">
               Every feature is designed to simplify your journey and highlight
               your strengths.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
             {features.map((feature, idx) => (
               <div
                 key={idx}
-                className="group p-10 rounded-[2rem] bg-white border border-gray-100 hover:border-primary-100 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] transition-all duration-500"
+                className="group p-10 rounded-[2rem] bg-white border border-gray-100 hover:border-primary-100 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] transition-all duration-500 text-left"
               >
                 <div
                   className={`${feature.bg} ${feature.color} w-14 h-14 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500`}
                 >
                   <feature.icon size={28} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 text-left">
                   {feature.title}
                 </h3>
-                <p className="text-gray-500 leading-relaxed font-medium">
+                <p className="text-gray-500 leading-relaxed font-medium text-left">
                   {feature.description}
                 </p>
               </div>
@@ -271,13 +286,13 @@ const Landing = () => {
       </section>
 
       {/* Templates Section */}
-      <section id="templates" className="py-32 bg-gray-50/50">
+      <section id="templates" className="py-32 bg-gray-50/50 text-left">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="mb-20">
-            <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
+          <div className="mb-20 text-center mx-auto">
+            <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight text-center">
               Pick your style.
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg mb-8">
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg mb-8 font-medium text-center">
               Start with a professionally crafted template and make it your own.
             </p>
             <Button 
@@ -289,9 +304,9 @@ const Landing = () => {
             </Button>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="grid md:grid-cols-3 gap-12 text-left">
             {templates.map((tpl, idx) => (
-              <div key={idx} className="group">
+              <div key={idx} className="group text-left">
                 <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden bg-white shadow-lg border border-gray-100 group-hover:shadow-2xl group-hover:-translate-y-4 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
                   <img
                     src={tpl.image}
@@ -314,11 +329,11 @@ const Landing = () => {
                     </div>
                   </div>
                 </div>
-                <div className="mt-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">
+                <div className="mt-8 text-left">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1 text-left">
                     {tpl.name}
                   </h3>
-                  <p className="text-sm font-bold text-primary-600 uppercase tracking-widest">
+                  <p className="text-sm font-bold text-primary-600 uppercase tracking-widest text-left">
                     {tpl.tag}
                   </p>
                 </div>
@@ -329,27 +344,27 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-32">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-gradient-to-br from-primary-900 to-indigo-950 rounded-[3rem] p-16 lg:p-28 relative overflow-hidden text-center shadow-2xl">
+      <section className="py-32 text-center">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="bg-gradient-to-br from-primary-900 to-indigo-950 rounded-[3rem] p-16 lg:p-28 relative overflow-hidden text-center shadow-2xl mx-auto">
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-600/20 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-600/20 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2"></div>
 
-            <div className="relative z-10">
-              <h2 className="text-4xl lg:text-6xl font-black text-white mb-8 tracking-tighter">
+            <div className="relative z-10 text-center">
+              <h2 className="text-4xl lg:text-6xl font-black text-white mb-8 tracking-tighter text-center">
                 Start building your <br /> career today.
               </h2>
-              <p className="text-primary-100/70 text-lg lg:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-primary-100/70 text-lg lg:text-xl mb-12 max-w-2xl mx-auto leading-relaxed font-medium text-center">
                 Join 10,000+ people who used ResumeBuilder to land roles at
                 companies like Google, Meta, and Stripe.
               </p>
               <Button
                 variant="gradient"
                 size="lg"
-                className="h-16 px-12 text-xl bg-white !from-white !to-white text-primary-900 hover:scale-105 transition-transform rounded-full"
-                onClick={() => navigate("/editor")}
+                className="h-16 px-12 text-xl bg-white !from-white !to-white text-primary-900 hover:scale-105 transition-transform rounded-full mx-auto"
+                onClick={handleGetStarted}
               >
-                Build My Resume — Free
+                {user ? 'Go to Dashboard' : 'Build My Resume — Free'}
               </Button>
             </div>
           </div>
@@ -357,62 +372,62 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white pt-24 pb-12 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-20">
-            <div className="col-span-1 md:col-span-1">
-              <div className="flex items-center gap-2.5 mb-8">
-                <div className="w-8 h-8 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
-                  <FileText className="text-white" size={18} />
+      <footer className="bg-white pt-24 pb-12 border-t border-gray-100 text-left">
+        <div className="max-w-7xl mx-auto px-6 text-left">
+          <div className="grid md:grid-cols-4 gap-12 mb-20 text-left">
+            <div className="col-span-1 md:col-span-1 text-left">
+              <div className="flex items-center gap-2.5 mb-8 text-left">
+                <div className="w-8 h-8 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 text-left">
+                  <FileText className="text-white text-left" size={18} />
                 </div>
-                <span className="text-xl font-bold tracking-tight text-gray-900">
+                <span className="text-xl font-bold tracking-tight text-gray-900 text-left">
                   ResumeBuilder
                 </span>
               </div>
-              <p className="text-gray-500 font-medium leading-relaxed max-w-xs">
+              <p className="text-gray-500 font-medium leading-relaxed max-w-xs text-left">
                 Making professional resume building accessible, beautiful, and
                 free for everyone.
               </p>
             </div>
 
-            <div>
-              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest">
+            <div className="text-left">
+              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest text-left">
                 Platform
               </h4>
-              <ul className="space-y-4 text-gray-500 font-medium">
+              <ul className="space-y-4 text-gray-500 font-medium text-left">
                 <li><Link to="/editor" className="hover:text-primary-600 transition-colors">Editor</Link></li>
                 <li><a href="#templates" className="hover:text-primary-600 transition-colors">Templates</a></li>
                 <li><a href="#features" className="hover:text-primary-600 transition-colors">Features</a></li>
               </ul>
             </div>
 
-            <div>
-              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest">
+            <div className="text-left">
+              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest text-left">
                 Connect
               </h4>
-              <ul className="space-y-4 text-gray-500 font-medium">
+              <ul className="space-y-4 text-gray-500 font-medium text-left">
                 <li><a href="#" className="hover:text-primary-600 transition-colors">Twitter</a></li>
                 <li><a href="#" className="hover:text-primary-600 transition-colors">GitHub</a></li>
                 <li><a href="#" className="hover:text-primary-600 transition-colors">LinkedIn</a></li>
               </ul>
             </div>
 
-            <div>
-              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest">
+            <div className="text-left">
+              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest text-left">
                 Legal
               </h4>
-              <ul className="space-y-4 text-gray-500 font-medium">
+              <ul className="space-y-4 text-gray-500 font-medium text-left">
                 <li><a href="#" className="hover:text-primary-600 transition-colors">Privacy</a></li>
                 <li><a href="#" className="hover:text-primary-600 transition-colors">Terms</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="pt-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-gray-400 text-sm font-medium italic">
+          <div className="pt-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6 text-left">
+            <p className="text-gray-400 text-sm font-medium italic text-left">
               © 2026 ResumeBuilder. Built with precision.
             </p>
-            <div className="flex gap-10">
+            <div className="flex gap-10 text-left">
               <Github className="text-gray-300 hover:text-gray-600 cursor-pointer transition-colors" size={20} />
               <Twitter className="text-gray-300 hover:text-gray-600 cursor-pointer transition-colors" size={20} />
             </div>
