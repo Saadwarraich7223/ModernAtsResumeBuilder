@@ -64,6 +64,7 @@ const TechnologistTemplate = ({ data, settings, theme }) => {
                     <div key={i} className="text-left">
                       <p className="text-[10px] font-black text-white leading-tight uppercase text-left">{cert.name}</p>
                       <p className="text-[9px] font-bold opacity-50 uppercase text-left mt-1">{cert.issuer}</p>
+                      <p className="text-[8px] font-mono opacity-30 text-left uppercase">{cert.date}</p>
                     </div>
                   ))}
                 </div>
@@ -74,9 +75,11 @@ const TechnologistTemplate = ({ data, settings, theme }) => {
               <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-4 text-left">Network</h2>
               <div className="space-y-2 text-[10px] font-mono opacity-80 uppercase tracking-tight text-left">
                 {personalInfo.email && <p className="break-all">EMAIL: {personalInfo.email}</p>}
+                {personalInfo.phone && <p>PHONE: {personalInfo.phone}</p>}
+                {personalInfo.address && <p>LOC: {personalInfo.address}</p>}
                 {personalInfo.github && <p className="break-all text-white font-bold">GITHUB: {personalInfo.github}</p>}
                 {personalInfo.linkedin && <p className="break-all">LINKEDIN: {personalInfo.linkedin}</p>}
-                {personalInfo.website && <p className="break-all">PORTFOLIO: {personalInfo.website}</p>}
+                {personalInfo.website && <p className="break-all underline">HTTP: {personalInfo.website}</p>}
               </div>
             </section>
           </div>
@@ -87,7 +90,7 @@ const TechnologistTemplate = ({ data, settings, theme }) => {
           {summary && (
             <section className="mb-12 text-left">
               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-4 font-mono text-left">{`> system.init_profile()`}</h2>
-              <p className="text-slate-300 font-medium leading-relaxed font-mono text-sm opacity-90 text-left">{summary}</p>
+              <p className="text-slate-300 font-medium leading-relaxed font-mono text-sm opacity-90 text-left whitespace-pre-wrap">{summary}</p>
             </section>
           )}
 
@@ -102,7 +105,10 @@ const TechnologistTemplate = ({ data, settings, theme }) => {
                       <h3 className="text-white font-black font-mono tracking-tight uppercase text-left">{exp.position}</h3>
                       <span className="text-[9px] font-mono text-slate-500 font-bold uppercase text-left">{exp.startDate} - {exp.endDate}</span>
                     </div>
-                    <p className="text-[10px] font-bold mb-4 uppercase tracking-widest text-left" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>@ {exp.company}</p>
+                    <div className="flex justify-between items-center mb-4 text-left">
+                       <p className="text-[10px] font-bold uppercase tracking-widest text-left" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>@ {exp.company}</p>
+                       {exp.location && <span className="text-[9px] font-mono opacity-30 text-left uppercase">LOC: {exp.location}</span>}
+                    </div>
                     <p className="text-slate-400 text-xs font-mono leading-relaxed whitespace-pre-wrap opacity-80 text-left">{exp.description}</p>
                   </div>
                 ))}
@@ -125,7 +131,7 @@ const TechnologistTemplate = ({ data, settings, theme }) => {
                       </span>
                     </div>
                     {project.technologies && <p className="text-[10px] font-bold mb-2 uppercase tracking-widest opacity-50 text-left">ENV: {project.technologies}</p>}
-                    <p className="text-slate-400 text-xs font-mono leading-relaxed text-left">{project.description}</p>
+                    <p className="text-slate-400 text-xs font-mono leading-relaxed text-left whitespace-pre-wrap">{project.description}</p>
                   </div>
                 ))}
               </div>
@@ -135,11 +141,16 @@ const TechnologistTemplate = ({ data, settings, theme }) => {
           {education?.length > 0 && (
             <section className="mb-12 text-left">
               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-4 font-mono text-left">{`> credentials.list()`}</h2>
-              <div className="space-y-4 font-mono text-left">
+              <div className="space-y-6 font-mono text-left">
                 {education.map((edu, i) => (
-                  <div key={i} className="text-left">
-                    <p className="text-white font-black text-xs uppercase tracking-tight text-left">{edu.degree}</p>
-                    <p className="text-slate-500 text-[10px] font-bold uppercase mt-1 text-left">{edu.school} // {edu.endDate}</p>
+                  <div key={i} className="text-left relative pl-6 border-l border-slate-800">
+                    <div className="absolute w-2 h-2 bg-slate-700 rounded-full -left-[4.5px] top-1.5"></div>
+                    <div className="flex justify-between items-baseline mb-1 text-left">
+                       <p className="text-white font-black text-xs uppercase tracking-tight text-left">{edu.degree}</p>
+                       <span className="text-[9px] font-mono text-slate-500 font-bold uppercase text-left">{edu.startDate} - {edu.endDate}</span>
+                    </div>
+                    {edu.fieldOfStudy && <p className="text-[10px] font-bold uppercase mb-1 opacity-70 text-left" style={{ color: theme.accent }}>{edu.fieldOfStudy}</p>}
+                    <p className="text-slate-500 text-[10px] font-bold uppercase text-left">{edu.school} {edu.location && `// ${edu.location}`}</p>
                   </div>
                 ))}
               </div>

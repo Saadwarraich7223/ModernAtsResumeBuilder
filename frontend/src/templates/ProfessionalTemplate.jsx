@@ -35,7 +35,9 @@ const ProfessionalTemplate = ({ data, settings, theme }) => {
           {personalInfo.email && <p>{personalInfo.email}</p>}
           {personalInfo.phone && <p>{personalInfo.phone}</p>}
           {personalInfo.address && <p>{personalInfo.address}</p>}
-          {personalInfo.website && <p>{personalInfo.website}</p>}
+          {personalInfo.website && <p className="underline">{personalInfo.website}</p>}
+          {personalInfo.github && <p>GitHub: {personalInfo.github}</p>}
+          {personalInfo.linkedin && <p>LinkedIn: {personalInfo.linkedin}</p>}
         </div>
       </header>
 
@@ -47,7 +49,7 @@ const ProfessionalTemplate = ({ data, settings, theme }) => {
               <h2 className="text-xs font-black uppercase tracking-[0.3em] mb-4 pb-1 text-left" style={{ color: theme.heading, borderBottom: `1px ${theme.divider} ${theme.secondary}` }}>
                 Executive Profile
               </h2>
-              <p className="font-medium leading-relaxed text-justify text-sm opacity-90">{summary}</p>
+              <p className="font-medium leading-relaxed text-justify text-sm opacity-90 whitespace-pre-wrap">{summary}</p>
             </section>
           )}
 
@@ -61,11 +63,11 @@ const ProfessionalTemplate = ({ data, settings, theme }) => {
                   <div key={i} className="text-left">
                     <div className="flex justify-between items-baseline mb-2">
                       <h3 className="text-lg font-black uppercase tracking-tight" style={{ color: theme.heading }}>{exp.position}</h3>
-                      <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{exp.startDate} — {exp.endDate}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{exp.startDate} — {exp.current ? 'Present' : exp.endDate}</span>
                     </div>
                     <div className="flex justify-between items-baseline mb-4">
                       <span className="font-bold text-sm" style={{ color: theme.accent }}>{exp.company}</span>
-                      <span className="text-[10px] font-bold opacity-30 uppercase">{exp.location}</span>
+                      {exp.location && <span className="text-[10px] font-bold opacity-30 uppercase">{exp.location}</span>}
                     </div>
                     <p className="text-xs font-medium opacity-80 whitespace-pre-wrap leading-relaxed">{exp.description}</p>
                   </div>
@@ -125,6 +127,27 @@ const ProfessionalTemplate = ({ data, settings, theme }) => {
             </section>
           )}
 
+          {education?.length > 0 && (
+            <section>
+              <h2 className="text-xs font-black uppercase tracking-[0.3em] mb-6 pb-1 text-left" style={{ color: theme.heading, borderBottom: `1px ${theme.divider} ${theme.secondary}` }}>
+                Credentials
+              </h2>
+              <div className="space-y-8 text-left">
+                {education.map((edu, i) => (
+                  <div key={i} className="text-left">
+                    <p className="font-black text-gray-900 leading-tight mb-1 uppercase tracking-tighter text-sm text-left">{edu.degree}</p>
+                    {edu.fieldOfStudy && <p className="text-[10px] font-bold opacity-70 mb-1 text-left uppercase">{edu.fieldOfStudy}</p>}
+                    <p className="text-xs font-bold mb-2 text-left" style={{ color: theme.accent }}>{edu.school}</p>
+                    <div className="flex justify-between items-center text-[9px] font-black opacity-30 uppercase tracking-widest">
+                       <span>{edu.startDate} — {edu.endDate}</span>
+                       {edu.location && <span>{edu.location}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {isVisible('languages') && languages?.length > 0 && (
             <section>
               <h2 className="text-xs font-black uppercase tracking-[0.3em] mb-6 pb-1 text-left" style={{ color: theme.heading, borderBottom: `1px ${theme.divider} ${theme.secondary}` }}>
@@ -152,23 +175,6 @@ const ProfessionalTemplate = ({ data, settings, theme }) => {
                     <p className="font-black text-gray-900 leading-tight mb-1 uppercase tracking-tighter text-sm">{cert.name}</p>
                     <p className="text-[10px] font-bold mb-2 uppercase tracking-widest" style={{ color: theme.accent }}>{cert.issuer}</p>
                     <p className="text-[9px] font-black opacity-30 uppercase tracking-widest">{cert.date}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {education?.length > 0 && (
-            <section>
-              <h2 className="text-xs font-black uppercase tracking-[0.3em] mb-6 pb-1 text-left" style={{ color: theme.heading, borderBottom: `1px ${theme.divider} ${theme.secondary}` }}>
-                Credentials
-              </h2>
-              <div className="space-y-8">
-                {education.map((edu, i) => (
-                  <div key={i}>
-                    <p className="font-black text-gray-900 leading-tight mb-1 uppercase tracking-tighter text-sm">{edu.degree}</p>
-                    <p className="text-xs font-bold mb-2" style={{ color: theme.accent }}>{edu.school}</p>
-                    <p className="text-[10px] font-black opacity-30 uppercase tracking-widest">{edu.endDate}</p>
                   </div>
                 ))}
               </div>

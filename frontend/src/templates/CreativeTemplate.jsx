@@ -32,21 +32,23 @@ const CreativeTemplate = ({ data, settings, theme }) => {
           {personalInfo.email && <span className="bg-black/10 px-4 py-2 rounded-full backdrop-blur-sm">{personalInfo.email}</span>}
           {personalInfo.phone && <span className="bg-black/10 px-4 py-2 rounded-full backdrop-blur-sm">{personalInfo.phone}</span>}
           {personalInfo.address && <span className="bg-black/10 px-4 py-2 rounded-full backdrop-blur-sm">{personalInfo.address}</span>}
-          {personalInfo.website && <span className="bg-black/10 px-4 py-2 rounded-full backdrop-blur-sm">{personalInfo.website}</span>}
+          {personalInfo.website && <span className="bg-black/10 px-4 py-2 rounded-full backdrop-blur-sm underline">{personalInfo.website}</span>}
+          {personalInfo.github && <span className="bg-black/10 px-4 py-2 rounded-full backdrop-blur-sm">GitHub: {personalInfo.github}</span>}
+          {personalInfo.linkedin && <span className="bg-black/10 px-4 py-2 rounded-full backdrop-blur-sm">LinkedIn: {personalInfo.linkedin}</span>}
         </div>
       </div>
 
       <div className="grid grid-cols-12 gap-10" style={{ padding: settings.pageMargin }}>
         <div className="col-span-8">
           {summary && (
-            <section className="mb-12">
+            <section className="mb-12 text-left">
               <h2 className="text-2xl font-black uppercase tracking-tight mb-4 italic" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>Profile</h2>
-              <p className="leading-relaxed text-lg font-medium opacity-90">{summary}</p>
+              <p className="leading-relaxed text-lg font-medium opacity-90 whitespace-pre-wrap">{summary}</p>
             </section>
           )}
 
           {workExperience?.length > 0 && (
-            <section className="mb-12">
+            <section>
               <h2 className="text-2xl font-black uppercase tracking-tight mb-8 italic" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>History</h2>
               <div className="space-y-10">
                 {workExperience.map((exp, i) => (
@@ -55,7 +57,10 @@ const CreativeTemplate = ({ data, settings, theme }) => {
                       <div className="h-1 flex-1 rounded-full" style={{ background: theme.secondary }}></div>
                       <span className="text-[10px] font-black opacity-40 uppercase tracking-[0.2em]">{exp.startDate} - {exp.current ? 'NOW' : exp.endDate}</span>
                     </div>
-                    <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{exp.position}</h3>
+                    <div className="flex justify-between items-baseline mb-2">
+                       <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{exp.position}</h3>
+                       {exp.location && <span className="text-[10px] font-black opacity-30 uppercase tracking-widest">{exp.location}</span>}
+                    </div>
                     <p className="font-bold mb-4" style={{ color: theme.accent }}>{exp.company}</p>
                     <p className="text-sm font-medium leading-relaxed opacity-80 whitespace-pre-wrap">{exp.description}</p>
                   </div>
@@ -65,7 +70,7 @@ const CreativeTemplate = ({ data, settings, theme }) => {
           )}
 
           {isVisible('projects') && projects?.length > 0 && (
-            <section className="mb-12">
+            <section className="mt-12">
               <h2 className="text-2xl font-black uppercase tracking-tight mb-8 italic" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>Projects</h2>
               <div className="space-y-8">
                 {projects.map((project, i) => (
@@ -84,7 +89,7 @@ const CreativeTemplate = ({ data, settings, theme }) => {
           )}
 
           {isVisible('custom') && customSections?.map((section, i) => (
-            <section key={i} className="mb-12">
+            <section key={i} className="mt-12">
               <h2 className="text-2xl font-black uppercase tracking-tight mb-4 italic" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>{section.title}</h2>
               <p className="text-sm font-medium leading-relaxed opacity-80 whitespace-pre-wrap">{section.content}</p>
             </section>
@@ -135,14 +140,18 @@ const CreativeTemplate = ({ data, settings, theme }) => {
           )}
 
           {education?.length > 0 && (
-            <section className="px-4">
-              <h2 className="text-xl font-black uppercase tracking-tight mb-6 italic" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>Education</h2>
-              <div className="space-y-6">
+            <section className="px-4 text-left">
+              <h2 className="text-xl font-black uppercase tracking-tight mb-6 italic text-left" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>Education</h2>
+              <div className="space-y-8 text-left">
                 {education.map((edu, i) => (
-                  <div key={i} className="relative pl-4 border-l-2" style={{ borderColor: theme.secondary }}>
-                    <p className="font-black text-gray-900 leading-tight uppercase tracking-tight text-sm">{edu.degree}</p>
-                    <p className="text-xs font-bold opacity-70 mt-1">{edu.school}</p>
-                    <p className="text-[10px] font-black opacity-30 mt-2 uppercase tracking-widest">{edu.endDate}</p>
+                  <div key={i} className="relative pl-4 border-l-2 text-left" style={{ borderColor: theme.secondary }}>
+                    <p className="font-black text-gray-900 leading-tight uppercase tracking-tight text-sm text-left">{edu.degree}</p>
+                    {edu.fieldOfStudy && <p className="text-xs font-bold opacity-70 mt-1 text-left uppercase">{edu.fieldOfStudy}</p>}
+                    <p className="text-xs font-bold opacity-50 mt-1 text-left">{edu.school}</p>
+                    <div className="flex flex-col mt-2 gap-1 text-left">
+                       <span className="text-[9px] font-black opacity-30 uppercase tracking-widest">{edu.startDate} - {edu.endDate}</span>
+                       {edu.location && <span className="text-[9px] font-black opacity-30 uppercase tracking-widest">{edu.location}</span>}
+                    </div>
                   </div>
                 ))}
               </div>

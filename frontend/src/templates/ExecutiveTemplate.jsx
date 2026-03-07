@@ -34,14 +34,16 @@ const ExecutiveTemplate = ({ data, settings, theme }) => {
           {personalInfo.email && <span>{personalInfo.email}</span>}
           {personalInfo.phone && <span>{personalInfo.phone}</span>}
           {personalInfo.address && <span>{personalInfo.address}</span>}
-          {personalInfo.website && <span>{personalInfo.website}</span>}
+          {personalInfo.website && <span className="underline">{personalInfo.website}</span>}
+          {personalInfo.github && <span>GitHub: {personalInfo.github}</span>}
+          {personalInfo.linkedin && <span>LinkedIn: {personalInfo.linkedin}</span>}
         </div>
       </header>
 
       {/* Summary */}
       {summary && (
         <section className="mb-12">
-          <p className="text-center italic text-lg font-medium max-w-3xl mx-auto leading-relaxed opacity-90">
+          <p className="text-center italic text-lg font-medium max-w-3xl mx-auto leading-relaxed opacity-90 whitespace-pre-wrap">
             "{summary}"
           </p>
         </section>
@@ -62,7 +64,10 @@ const ExecutiveTemplate = ({ data, settings, theme }) => {
                   <h3 className="text-xl font-black uppercase tracking-tight text-left" style={{ color: theme.heading }}>{exp.company}</h3>
                   <span className="text-[10px] font-black uppercase tracking-widest opacity-40 italic">{exp.startDate} — {exp.endDate}</span>
                 </div>
-                <p className="text-sm font-bold uppercase tracking-widest mb-4 text-left" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>{exp.position}</p>
+                <div className="flex justify-between items-center mb-4 text-left">
+                   <p className="text-sm font-bold uppercase tracking-widest text-left" style={{ color: theme.primary.includes('gradient') ? theme.accent : theme.primary }}>{exp.position}</p>
+                   {exp.location && <p className="text-[10px] font-black opacity-30 uppercase text-left">{exp.location}</p>}
+                </div>
                 <p className="text-sm font-medium opacity-80 whitespace-pre-wrap leading-relaxed border-l-4 pl-8 text-left" style={{ borderColor: theme.secondary }}>
                   {exp.description}
                 </p>
@@ -109,8 +114,12 @@ const ExecutiveTemplate = ({ data, settings, theme }) => {
                 {education.map((edu, i) => (
                   <div key={i} className="text-left">
                     <p className="font-black text-gray-900 uppercase tracking-tight text-sm text-left" style={{ color: theme.heading }}>{edu.degree}</p>
+                    {edu.fieldOfStudy && <p className="text-[10px] font-bold opacity-60 mt-1 uppercase tracking-tight text-left">{edu.fieldOfStudy}</p>}
                     <p className="text-xs font-bold opacity-70 mt-1 text-left">{edu.school}</p>
-                    <p className="text-[10px] font-black mt-2 uppercase tracking-widest text-left" style={{ color: theme.accent }}>{edu.endDate}</p>
+                    <div className="flex justify-between items-center mt-2 text-[9px] font-black opacity-40 uppercase tracking-tighter text-left" style={{ color: theme.accent }}>
+                       <span>{edu.startDate} — {edu.endDate}</span>
+                       {edu.location && <span>{edu.location}</span>}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -120,7 +129,7 @@ const ExecutiveTemplate = ({ data, settings, theme }) => {
           {isVisible('languages') && languages?.length > 0 && (
             <section>
               <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-6 pb-2 border-b-2 opacity-40 text-left" style={{ borderColor: theme.secondary }}>Linguistics</h2>
-              <div className="grid grid-cols-1 gap-y-3">
+              <div className="grid grid-cols-1 gap-y-3 text-left">
                 {languages.map((lang, i) => (
                   <div key={i} className="flex justify-between items-center text-left">
                     <span className="text-[10px] font-black uppercase tracking-widest text-left" style={{ color: theme.heading }}>{lang.name}</span>
@@ -132,12 +141,12 @@ const ExecutiveTemplate = ({ data, settings, theme }) => {
           )}
         </div>
 
-        <div className="space-y-12">
+        <div className="space-y-12 text-left">
           {/* Skills */}
           {skills?.length > 0 && (
-            <section>
+            <section className="text-left">
               <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-6 pb-2 border-b-2 opacity-40 text-left" style={{ borderColor: theme.secondary }}>Competencies</h2>
-              <div className="grid grid-cols-1 gap-y-3">
+              <div className="grid grid-cols-1 gap-y-3 text-left">
                 {skills.map((skill, i) => (
                   <div key={i} className="flex items-center gap-3 text-left">
                     <div className="w-1 h-1 rounded-full" style={{ backgroundColor: theme.accent }}></div>
@@ -149,9 +158,9 @@ const ExecutiveTemplate = ({ data, settings, theme }) => {
           )}
 
           {isVisible('certifications') && certifications?.length > 0 && (
-            <section>
+            <section className="text-left">
               <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-6 pb-2 border-b-2 opacity-40 text-left" style={{ borderColor: theme.secondary }}>Accreditations</h2>
-              <div className="space-y-6">
+              <div className="space-y-6 text-left">
                 {certifications.map((cert, i) => (
                   <div key={i} className="text-left">
                     <p className="font-black text-gray-900 uppercase tracking-tight text-[11px] text-left" style={{ color: theme.heading }}>{cert.name}</p>
