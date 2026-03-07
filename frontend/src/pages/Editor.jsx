@@ -17,6 +17,8 @@ import {
   ChevronRight,
   Eye,
   Sparkles,
+  ShieldCheck,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
@@ -31,6 +33,7 @@ import Experience from "../components/editor/Experience";
 import Education from "../components/editor/Education";
 import Skills from "../components/editor/Skills";
 import Settings from "../components/editor/Settings";
+import ATSAnalysis from "../components/editor/ATSAnalysis";
 
 const sections = [
   { id: "import", label: "Import", icon: FileUp },
@@ -40,6 +43,7 @@ const sections = [
   { id: "experience", label: "Experience", icon: Briefcase },
   { id: "education", label: "Education", icon: GraduationCap },
   { id: "skills", label: "Skills", icon: Code },
+  { id: "ats", label: "ATS AI Scan", icon: ShieldCheck },
   { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
 
@@ -102,6 +106,8 @@ const Editor = () => {
         return <Education />;
       case "skills":
         return <Skills />;
+      case "ats":
+        return <ATSAnalysis />;
       case "settings":
         return <Settings />;
       default:
@@ -118,8 +124,8 @@ const Editor = () => {
       </div>
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 h-20 bg-white/70 backdrop-blur-2xl border-b border-gray-100 z-30">
-        <div className="flex items-center gap-6 flex-1">
+      <header className="flex items-center justify-between px-6 h-20 bg-white/70 backdrop-blur-2xl border-b border-gray-100 z-30 text-left">
+        <div className="flex items-center gap-6 flex-1 text-left">
           <button
             onClick={() => navigate("/")}
             className="p-2 hover:bg-gray-100 rounded-xl text-gray-400 transition-colors"
@@ -127,15 +133,15 @@ const Editor = () => {
             <ArrowLeft size={20} />
           </button>
           <div className="h-8 w-px bg-gray-100 hidden md:block"></div>
-          <div className="flex flex-col">
+          <div className="flex flex-col text-left">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-transparent border-none p-0 text-lg font-black tracking-tight text-gray-900 focus:ring-0 w-full max-w-[200px] md:max-w-md"
+              className="bg-transparent border-none p-0 text-lg font-black tracking-tight text-gray-900 focus:ring-0 w-full max-w-[200px] md:max-w-md text-left"
               placeholder="Resume Title..."
             />
-            <div className="flex items-center gap-2 mt-0.5">
+            <div className="flex items-center gap-2 mt-0.5 text-left">
               <div className="h-1 w-24 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary-600 transition-all duration-500"
@@ -177,8 +183,8 @@ const Editor = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-20 md:w-72 bg-white border-r border-gray-100 flex flex-col py-8 z-20">
-          <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-hide">
+        <aside className="w-30 md:w-60 bg-white border-r border-gray-100 flex flex-col py-8 z-20 text-left">
+          <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-hide text-left">
             {sections.map((section) => {
               const complete = isSectionComplete(section.id);
               return (
@@ -188,7 +194,7 @@ const Editor = () => {
                     setActiveSection(section.id);
                     setShowPreviewMobile(false);
                   }}
-                  className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 relative group ${
+                  className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 relative group text-left ${
                     activeSection === section.id
                       ? "bg-primary-600 text-white shadow-lg shadow-primary-500/25"
                       : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
@@ -218,18 +224,21 @@ const Editor = () => {
             })}
           </nav>
 
-          {/* Quick Support Card */}
+          {/* AI Status Indicator */}
           <div className="px-6 mt-6 hidden md:block">
-            <div className="p-5 bg-indigo-50 rounded-3xl border border-indigo-100 space-y-3 relative overflow-hidden group">
+            <div className="p-5 bg-indigo-50 rounded-3xl border border-indigo-100 space-y-3 relative overflow-hidden group text-left">
               <div className="absolute -top-4 -right-4 w-16 h-16 bg-indigo-200/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
               <p className="text-xs font-black text-indigo-900 uppercase tracking-widest flex items-center gap-2">
-                <Sparkles size={14} /> Need Help?
+                <Sparkles size={14} /> AI Power Active
               </p>
               <p className="text-[11px] text-indigo-700/80 font-bold leading-relaxed">
-                Check out our resume writing tips for better results.
+                Powered by OpenAI GPT-4o-mini for premium resume generation.
               </p>
-              <button className="text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1">
-                Learn More <ChevronRight size={12} />
+              <button
+                onClick={() => setActiveSection("ats")}
+                className="text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1"
+              >
+                Run ATS Scan <ChevronRight size={12} />
               </button>
             </div>
           </div>
@@ -237,10 +246,10 @@ const Editor = () => {
 
         {/* Main Editor Area */}
         <main
-          className={`flex-1 overflow-y-auto p-6 md:p-12 transition-all duration-500 ${showPreviewMobile ? "hidden" : "block"}`}
+          className={`flex-1 overflow-y-auto p-2  md:p-4 transition-all duration-500 ${showPreviewMobile ? "hidden" : "block"}`}
         >
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-[2.5rem] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] border border-gray-100 p-8 md:p-12 relative overflow-hidden">
+            <div className="bg-white rounded-xl shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] border border-gray-100 p-2 md:p-4 relative overflow-hidden text-left">
               {/* Decorative Gradient Line */}
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-600 via-indigo-600 to-purple-600 opacity-80"></div>
               {renderSection()}

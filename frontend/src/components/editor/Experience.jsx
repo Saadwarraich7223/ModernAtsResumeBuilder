@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useResumeStore from '../../store/resumeStore';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { Plus, Trash2, Briefcase, Calendar, MapPin, Sparkles } from 'lucide-react';
+import AIAssistant, { AISuggestionCard } from './AIAssistant';
+import { improveExperienceBullet } from '../../api/aiService';
 
 const Experience = () => {
-  const { data, updateSection } = useResumeStore();
+  const { data, updateSection, setAILoading, setAIError } = useResumeStore();
   const experiences = data.workExperience || [];
+  const [activeAIIndex, setActiveAIIndex] = useState(null);
+  const [suggestion, setSuggestion] = useState(null);
 
   const addExperience = () => {
     const newExp = {
@@ -36,6 +40,32 @@ const Experience = () => {
     updateSection('workExperience', updated);
   };
 
+  const handleImproveAI = async (index) => {
+    const exp = experiences[index];
+    if (!exp.description || exp.description.length < 10) {
+      setAIError('Please write a bit more in the description first.');
+      return;
+    }
+
+    setAILoading(true);
+    setAIError(null);
+    setActiveAIIndex(index);
+    try {
+      const result = await improveExperienceBullet(exp.description, exp.position);
+      setSuggestion(result);
+    } catch (err) {
+      setAIError(err.message || 'AI Improvement failed');
+    } finally {
+      setAILoading(false);
+    }
+  };
+
+  const applySuggestion = () => {
+    handleChange(activeAIIndex, 'description', suggestion);
+    setSuggestion(null);
+    setActiveAIIndex(null);
+  };
+
   const FieldLabel = ({ icon: Icon, label }) => (
     <div className="flex items-center gap-2 mb-0.5">
       <Icon size={14} className="text-gray-400" />
@@ -44,11 +74,11 @@ const Experience = () => {
   );
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-6">
-        <div>
-          <h2 className="text-2xl font-black text-gray-900 tracking-tight">Work Experience</h2>
-          <p className="text-gray-500 font-medium">Highlight your professional journey and key achievements.</p>
+    <div className="space-y-8 animate-fade-in text-left">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-6 text-left">
+        <div className="text-left">
+          <h2 className="text-2xl font-black text-gray-900 tracking-tight text-left">Work Experience</h2>
+          <p className="text-gray-500 font-medium text-left">Highlight your professional journey and key achievements.</p>
         </div>
         <Button 
           onClick={addExperience} 
@@ -76,7 +106,7 @@ const Experience = () => {
       ) : (
         <div className="space-y-10">
           {experiences.map((exp, index) => (
-            <div key={index} className="relative group p-8 rounded-[2rem] bg-white border border-gray-100 hover:border-primary-100 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] transition-all duration-500">
+            <div key={index} className="relative group p-8 rounded-[2rem] bg-white border border-gray-100 hover:border-primary-100 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] transition-all duration-500 text-left shadow-sm">
               <button 
                 onClick={() => removeExperience(index)}
                 className="absolute -top-3 -right-3 w-10 h-10 bg-white border border-gray-100 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-100 hover:shadow-lg transition-all z-10 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
@@ -85,7 +115,7 @@ const Experience = () => {
                 <Trash2 size={18} />
               </button>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 text-left">
                 <div>
                    <FieldLabel icon={Briefcase} label="Company Name" />
                    <Input
@@ -110,7 +140,7 @@ const Experience = () => {
                      placeholder="e.g. Mountain View, CA"
                    />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 text-left">
                    <div>
                       <FieldLabel icon={Calendar} label="Start Date" />
                       <Input
@@ -147,10 +177,23 @@ const Experience = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <FieldLabel icon={Sparkles} label="Key Achievements & Responsibilities" />
+              <div className="space-y-4 text-left">
+                <div className="flex items-center justify-between text-left">
+                   <FieldLabel icon={Sparkles} label="Key Achievements" />
+                   <AIAssistant onAction={() => handleImproveAI(index)} label="Improve with AI" />
+                </div>
+
+                {suggestion && activeAIIndex === index && (
+                  <AISuggestionCard 
+                    onAccept={applySuggestion} 
+                    onDecline={() => { setSuggestion(null); setActiveAIIndex(null); }}
+                  >
+                    {suggestion}
+                  </AISuggestionCard>
+                )}
+
                 <textarea
-                  className="w-full h-48 px-4 py-4 rounded-[1.5rem] border border-gray-200 bg-white text-gray-900 shadow-sm transition-all duration-200 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100 placeholder:text-gray-400 group-hover:border-gray-300 resize-none font-medium leading-relaxed"
+                  className="w-full h-48 px-4 py-4 rounded-[1.5rem] border border-gray-200 bg-white text-gray-900 shadow-sm transition-all duration-200 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100 placeholder:text-gray-400 group-hover:border-gray-300 resize-none font-medium leading-relaxed text-left"
                   placeholder="• Led the redesign of our core product dashboard...&#10;• Increased user engagement by 40% within 3 months..."
                   value={exp.description}
                   onChange={(e) => handleChange(index, 'description', e.target.value)}

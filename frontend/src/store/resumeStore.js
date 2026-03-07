@@ -3,6 +3,8 @@ import api from '../api/axios';
 
 const initialState = {
   title: 'Untitled Resume',
+  aiLoading: false,
+  aiError: null,
   data: {
     personalInfo: {
       fullName: '',
@@ -69,6 +71,10 @@ const useResumeStore = create((set, get) => ({
       settings: { ...state.settings, ...settings },
     }));
   },
+
+  // AI ACTIONS
+  setAILoading: (loading) => set({ aiLoading: loading }),
+  setAIError: (error) => set({ aiError: error }),
 
   setTemplateId: (templateId) => set({ templateId }),
 
