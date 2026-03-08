@@ -3,10 +3,10 @@
 A world-class, open-source, and unlimited Resume Builder Web App. Redesigned with a premium SaaS aesthetic (Stripe/Linear style), featuring a high-performance editor, AI-powered content generation, and pixel-perfect templates.
 
 ![Landing Preview]
-DARK THEME
-<img src="/frontend/src/assets/landingPageDark.png" alt="Template Preview" width="300" />
-LIGHT THEME
-<img src="/frontend/src/assets/landingPageLight.png" alt="Template Preview" width="300" />
+
+| Dark Theme                                       | Light Theme                                        |
+| ------------------------------------------------ | -------------------------------------------------- |
+| ![Dark](frontend/src/assets/landingPageDark.png) | ![Light](frontend/src/assets/landingPageLight.png) |
 
 ## ✨ Features
 
