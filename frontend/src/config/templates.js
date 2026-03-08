@@ -7,6 +7,9 @@ import classicSerif1 from "../assets/templates/classicSerif1.png";
 import executive1 from "../assets/templates/executive1.png";
 import creativePro1 from "../assets/templates/creativePro1.png";
 import compact1 from "../assets/templates/compact1.png";
+import swissModern1 from "../assets/templates/swissModern1.png";
+import cyberEngineer1 from "../assets/templates/cyberEngineer1.png";
+import modernLinear1 from "../assets/templates/modernLinear1.png";
 
 import {
   ShieldCheck,
@@ -90,7 +93,8 @@ export const TEMPLATES = [
     name: "Classic Serif",
     category: "minimal",
     tag: "Academic",
-    description: "Traditional academic and legal style with elegant typography.",
+    description:
+      "Traditional academic and legal style with elegant typography.",
     image: classicSerif1,
     icon: BookOpen,
     color: "text-stone-600",
@@ -101,7 +105,8 @@ export const TEMPLATES = [
     name: "Executive Elite",
     category: "professional",
     tag: "Leadership",
-    description: "Elegant and sophisticated design for leadership and management.",
+    description:
+      "Elegant and sophisticated design for leadership and management.",
     image: executive1,
     icon: Award,
     color: "text-amber-600",
@@ -123,12 +128,50 @@ export const TEMPLATES = [
     name: "Compact Logic",
     category: "tech",
     tag: "Efficient",
-    description: "High-density efficient design for extensive professional backgrounds.",
+    description:
+      "High-density efficient design for extensive professional backgrounds.",
     image: compact1,
     icon: Zap,
     color: "text-rose-600",
     bg: "bg-rose-50",
   },
+  {
+    id: "swiss-modern-1",
+    name: "Swiss Modern",
+    category: "minimal",
+    tag: "ATS-Elite",
+    description:
+      "High-contrast, bold typography and maximum readability for ATS survival.",
+    image: swissModern1,
+    icon: ShieldCheck,
+    color: "text-slate-900",
+    bg: "bg-slate-50",
+  },
+  {
+    id: "cyber-engineer-1",
+    name: "Cyber Engineer",
+    category: "tech",
+    tag: "High-Tech",
+    description:
+      "Dark-themed, neon-accented design for cutting-edge software roles.",
+    image: cyberEngineer1,
+    icon: Code,
+    color: "text-indigo-400",
+    bg: "bg-slate-900",
+  },
+  {
+    id: "modern-linear-1",
+    name: "Modern Linear",
+    category: "modern",
+    tag: "Premium",
+    description:
+      "SaaS-inspired aesthetic with clean lines and superior spacing.",
+    image: modernLinear1,
+    icon: Layout,
+    color: "text-blue-600",
+    bg: "bg-blue-50",
+  },
 ];
 
-export const getTemplateById = (id) => TEMPLATES.find((t) => t.id === id) || TEMPLATES[0];
+export const getTemplateById = (id) =>
+  TEMPLATES.find((t) => t.id === id) || TEMPLATES[0];

@@ -8,6 +8,9 @@ import TechnologistTemplate from './TechnologistTemplate';
 import CompactTemplate from './CompactTemplate';
 import CreativeProTemplate from './CreativeProTemplate';
 import ClassicSerifTemplate from './ClassicSerifTemplate';
+import SwissModernTemplate from './SwissModernTemplate';
+import CyberEngineerTemplate from './CyberEngineerTemplate';
+import ModernLinearTemplate from './ModernLinearTemplate';
 import { getThemeById } from '../themes/themeConfig';
 
 const TemplateRenderer = ({ templateId, data, settings }) => {
@@ -21,6 +24,9 @@ const TemplateRenderer = ({ templateId, data, settings }) => {
     'compact-1': CompactTemplate,
     'creative-pro-1': CreativeProTemplate,
     'classic-serif-1': ClassicSerifTemplate,
+    'swiss-modern-1': SwissModernTemplate,
+    'cyber-engineer-1': CyberEngineerTemplate,
+    'modern-linear-1': ModernLinearTemplate,
   };
 
   const SelectedTemplate = templates[templateId] || MinimalTemplate;
