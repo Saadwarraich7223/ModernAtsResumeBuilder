@@ -8,17 +8,15 @@
   --font-mono: "JetBrains Mono", "monospace";
 
   /* Accessible Color Palette */
-  --color-slate-900: #0F172A; /* Light mode heading */
-  --color-slate-600: #475569; /* Light mode body */
-  --color-slate-400: #94A3B8; /* Muted */
-  
-  --color-slate-50: #F8FAFC;  /* Dark mode heading */
-  --color-indigo-100: #CBD5F5; /* Dark mode body */
+  --color-slate-900: #0F172A;
+  --color-slate-600: #475569;
+  --color-slate-400: #94A3B8;
+  --color-slate-50: #F8FAFC;
+  --color-indigo-100: #CBD5F5;
 
   /* Custom Animations */
   --animate-gradient-x: gradient-x 15s ease infinite;
   --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
   @keyframes gradient-x {
     0%, 100% { background-size: 200% 200%; background-position: left center; }
@@ -30,24 +28,27 @@
   }
 }
 
+/* Tailwind v4 Dark Mode Selector Strategy */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   html {
     scroll-behavior: smooth;
   }
   
   body {
-    @apply font-sans antialiased bg-white dark:bg-[#020617] text-slate-600 dark:text-indigo-100 transition-colors duration-300;
+    @apply font-sans antialiased bg-white dark:bg-[#020617] text-slate-600 dark:text-indigo-100 transition-colors duration-500;
     margin: 0;
   }
 
   h1, h2, h3, h4 {
-    @apply text-slate-900 dark:text-slate-50 font-heading tracking-tight;
+    @apply text-slate-900 dark:text-slate-50 font-heading tracking-tight transition-colors duration-500;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/80 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 shadow-sm;
+    @apply bg-white/90 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/60 dark:border-slate-800/60 shadow-sm transition-all duration-500;
   }
 
   .hero-gradient {
@@ -65,5 +66,9 @@
 
   .mono-label {
     @apply font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500;
+  }
+
+  .preview-glow {
+    @apply absolute -inset-4 bg-indigo-500/5 dark:bg-indigo-500/10 blur-3xl rounded-[3rem] opacity-0 transition-opacity duration-700;
   }
 }
