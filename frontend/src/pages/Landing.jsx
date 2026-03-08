@@ -1,28 +1,112 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
   FileText,
-  CheckCircle,
-  Download,
+  ShieldCheck,
   Layout,
   Zap,
-  ShieldCheck,
-  ArrowRight,
+  Download,
   Github,
   Twitter,
   Linkedin,
-  Monitor,
-  MousePointer2,
   Sparkles,
+  ArrowRight,
+  Sun,
+  Moon,
+  Menu,
+  X,
+  Search,
+  ExternalLink,
+  Check,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import useResumeStore from "../store/resumeStore";
 import useAuthStore from "../store/authStore";
 
+// --- REFINED SUB-COMPONENTS ---
+
+const MagneticButton = ({ children, className, onClick, variant = "gradient", size = "md" }) => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const ref = useRef(null);
+
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const x = clientX - (left + width / 2);
+    const y = clientY - top - height / 2;
+    setPosition({ x: x * 0.2, y: y * 0.2 });
+  };
+
+  const reset = () => setPosition({ x: 0, y: 0 });
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "spring", stiffness: 200, damping: 20, mass: 0.1 }}
+    >
+      <Button variant={variant} size={size} className={`${className} h-12 px-6 rounded-xl font-semibold transition-all`} onClick={onClick}>
+        {children}
+      </Button>
+    </motion.div>
+  );
+};
+
+const BentoCard = ({ children, className, delay = 0 }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay }}
+    className={`bento-card p-6 ${className}`}
+  >
+    {children}
+  </motion.div>
+);
+
+const SectionHeading = ({ label, title, description, center = true }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 15 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    className={`mb-12 lg:mb-16 ${center ? 'text-center max-w-2xl mx-auto' : 'text-left max-w-xl'}`}
+  >
+    <div className="mono-label mb-4">{label}</div>
+    <h2 className="text-3xl lg:text-4xl font-bold mb-4 tracking-tight">
+      {title}
+    </h2>
+    <p className="text-base lg:text-lg text-slate-600 dark:text-indigo-100/70 leading-relaxed">
+      {description}
+    </p>
+  </motion.div>
+);
+
+// --- MAIN COMPONENT ---
+
 const Landing = () => {
   const navigate = useNavigate();
   const { setTemplateId, resetResume } = useResumeStore();
   const { user } = useAuthStore();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const { scrollYProgress } = useScroll();
+  const opacityRange = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isDarkMode) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  }, [isDarkMode]);
 
   const handleSelectTemplate = (id) => {
     resetResume();
@@ -31,405 +115,369 @@ const Landing = () => {
   };
 
   const handleGetStarted = () => {
-    if (user) {
-      navigate('/dashboard');
-    } else {
-      navigate('/register');
-    }
+    if (user) navigate('/dashboard');
+    else navigate('/register');
   };
 
-  const features = [
-    {
-      title: "ATS-Friendly Templates",
-      description:
-        "Our templates are designed to pass through Applicant Tracking Systems (ATS) with ease.",
-      icon: ShieldCheck,
-      color: "text-indigo-600",
-      bg: "bg-indigo-50/50",
-    },
-    {
-      title: "Live Preview Editor",
-      description:
-        "See changes in real-time as you type. No more guessing how your resume will look.",
-      icon: Layout,
-      color: "text-purple-600",
-      bg: "bg-purple-50/50",
-    },
-    {
-      title: "One-Click Export",
-      description:
-        "Export your resume as a professional PDF, ready to be sent to recruiters.",
-      icon: Download,
-      color: "text-blue-600",
-      bg: "bg-blue-50/50",
-    },
-    {
-      title: "Privacy First",
-      description:
-        "Your data is yours. We don't sell your personal information or spam you.",
-      icon: CheckCircle,
-      color: "text-emerald-600",
-      bg: "bg-emerald-50/50",
-    },
-    {
-      title: "Modern Typography",
-      description:
-        "Professional fonts and layout ratios optimized for readability and style.",
-      icon: Sparkles,
-      color: "text-amber-600",
-      bg: "bg-amber-50/50",
-    },
-    {
-      title: "Intelligent Parsing",
-      description:
-        "Import your existing data or paste text to quickly populate your resume.",
-      icon: Zap,
-      color: "text-rose-600",
-      bg: "bg-rose-50/50",
-    },
-  ];
-
-  const templates = [
-    {
-      id: "minimal-1",
-      name: "Minimal",
-      image:
-        "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600&h=800",
-      tag: "Classic",
-    },
-    {
-      id: "modern-1",
-      name: "Modern",
-      image:
-        "https://images.unsplash.com/photo-1626197031507-c17099753214?auto=format&fit=crop&q=80&w=600&h=800",
-      tag: "Professional",
-    },
-    {
-      id: "creative-1",
-      name: "Creative",
-      image:
-        "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?auto=format&fit=crop&q=80&w=600&h=800",
-      tag: "Stylish",
-    },
-  ];
-
   return (
-    <div className="min-h-screen text-gray-900 font-sans selection:bg-indigo-100 selection:text-indigo-700 relative overflow-x-hidden">
-      {/* GLOBAL MODERN SAAS BACKGROUND */}
-      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-indigo-50/40"></div>
-        <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-r from-indigo-300/30 via-purple-300/30 to-blue-300/30 blur-[140px]"></div>
-        <div className="absolute top-[30%] left-[-10%] w-[500px] h-[500px] bg-indigo-300/20 rounded-full blur-[140px]"></div>
-        <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] bg-purple-300/20 rounded-full blur-[140px]"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#6366f10a_1px,transparent_1px),linear-gradient(to_bottom,#6366f10a_1px,transparent_1px)] bg-[size:48px_48px]"></div>
+    <div className={`min-h-screen font-sans selection:bg-indigo-500/20 relative overflow-x-hidden ${isDarkMode ? 'dark' : ''}`}>
+      <div className="noise-bg"></div>
+      
+      {/* COMPACT BACKGROUNDS */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.06),transparent_70%)]"></div>
       </div>
 
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full bg-white/70 backdrop-blur-2xl border-b border-gray-100/50 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center text-left">
-          <div className="flex items-center gap-2.5 text-left">
-            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 text-left">
-              <FileText className="text-white text-left" size={20} />
+      {/* REFINED NAVBAR */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'py-3' : 'py-5'}`}>
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className={`glass-card rounded-2xl flex items-center justify-between px-6 h-14 transition-all duration-300 ${isScrolled ? 'shadow-md border-slate-200/60 dark:border-slate-800/60' : 'bg-transparent border-transparent shadow-none'}`}>
+            <div className="flex items-center gap-2.5 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg transition-transform group-hover:scale-105">
+                <FileText className="text-white" size={18} />
+              </div>
+              <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                Resume<span className="text-indigo-600">Builder</span>
+              </span>
             </div>
-            <span className="text-xl font-bold tracking-tight text-gray-900 text-left">
-              ResumeBuilder
-            </span>
-          </div>
 
-          <div className="hidden md:flex items-center gap-10">
-            <a href="#features" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Features</a>
-            <a href="#templates" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Templates</a>
-            {user ? (
-              <Link to="/dashboard" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Dashboard</Link>
-            ) : (
-              <Link to="/login" className="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors">Sign In</Link>
-            )}
-            <Button variant="gradient" size="md" className="rounded-full px-6" onClick={handleGetStarted}>
-              {user ? 'Dashboard' : 'Get Started'}
-            </Button>
+            <div className="hidden md:flex items-center gap-8">
+              {['Features', 'Templates', 'Comparison'].map((item) => (
+                <a key={item} href={`#${item.toLowerCase()}`} className="text-xs font-bold text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors uppercase tracking-widest">{item}</a>
+              ))}
+              <div className="h-4 w-px bg-slate-200 dark:bg-slate-800"></div>
+              <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                {isDarkMode ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-slate-500" />}
+              </button>
+              
+              <AnimatePresence>
+                {isScrolled && (
+                  <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}>
+                    <Button variant="gradient" size="sm" className="rounded-xl px-5 h-9 font-bold text-xs shadow-sm" onClick={handleGetStarted}>
+                      Get Started
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
+              {!isScrolled && (
+                <Link to="/login" className="text-xs font-bold text-slate-900 dark:text-slate-50 uppercase tracking-widest">Sign In</Link>
+              )}
+            </div>
+
+            <button className="md:hidden p-2 text-slate-900 dark:text-slate-50" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="pt-44 pb-24 lg:pt-56 lg:pb-32 overflow-hidden text-left">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-100 shadow-sm text-gray-600 text-xs font-bold uppercase tracking-wider mb-8 animate-fade-in mx-auto">
-            <Sparkles size={14} className="text-amber-500" />
-            Empowering Your Career Journey
-          </div>
-
-          <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-gray-900 mb-8 leading-[1.05] max-w-4xl mx-auto">
-            Build a resume that <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-indigo-600 to-purple-600">
-              gets you hired.
-            </span>
-          </h1>
-
-          <p className="max-w-2xl mx-auto text-lg lg:text-xl text-gray-500 mb-12 leading-relaxed font-medium">
-            The minimal, high-performance resume builder. No fluff, no hidden
-            costs. Just professional results in minutes.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mx-auto">
-            <Button
-              variant="gradient"
-              size="lg"
-              className="w-full sm:w-auto h-14 px-10 text-lg gap-2 rounded-full"
-              onClick={handleGetStarted}
-            >
-              {user ? 'Go to Dashboard' : 'Create My Resume'} <ArrowRight size={20} />
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full sm:w-auto h-14 px-10 text-lg rounded-full border-gray-200"
-              onClick={() => {
-                document.getElementById('templates').scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              Browse Designs
-            </Button>
-          </div>
-
-          {/* Hero Mockup */}
-          <div className="mt-24 relative max-w-5xl mx-auto group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-purple-600 rounded-[2.5rem] blur-2xl opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-            <div className="relative bg-white rounded-[2.5rem] border border-gray-100 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden">
-              <div className="flex items-center gap-1.5 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
-              </div>
-              <div className="aspect-[16/10] overflow-hidden bg-[#fbfbfb]">
-                <div className="flex h-full">
-                  <div className="w-1/4 border-r border-gray-100 p-6 space-y-4 hidden md:block">
-                    <div className="h-4 w-3/4 bg-gray-100 rounded"></div>
-                    <div className="space-y-2">
-                      <div className="h-3 w-full bg-gray-50 rounded"></div>
-                      <div className="h-3 w-full bg-gray-50 rounded"></div>
-                      <div className="h-3 w-5/6 bg-gray-50 rounded"></div>
-                    </div>
-                  </div>
-                  <div className="flex-1 p-8">
-                    <div className="max-w-xl mx-auto space-y-8 animate-pulse">
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-3 w-1/2">
-                          <div className="h-8 bg-gray-100 rounded-lg"></div>
-                          <div className="h-4 bg-gray-50 rounded-lg w-3/4"></div>
-                        </div>
-                        <div className="w-16 h-16 bg-gray-50 rounded-2xl"></div>
-                      </div>
-                      <div className="space-y-4">
-                        <div className="h-4 bg-gray-100 rounded w-1/4"></div>
-                        <div className="space-y-2">
-                          <div className="h-3 bg-gray-50 rounded"></div>
-                          <div className="h-3 bg-gray-50 rounded"></div>
-                          <div className="h-3 bg-gray-50 rounded w-5/6"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      {/* MOBILE MENU */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="fixed inset-0 z-40 md:hidden pt-24 px-6 bg-white dark:bg-slate-950">
+            <div className="flex flex-col gap-6 text-center">
+              {['Features', 'Templates', 'Comparison'].map(item => (
+                <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold">{item}</a>
+              ))}
+              <Button variant="gradient" size="lg" className="rounded-2xl" onClick={handleGetStarted}>Get Started</Button>
             </div>
-            {/* Interactive elements */}
-            <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-48 bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 hidden lg:block animate-slide-up text-left">
-              <div className="flex items-center gap-3 mb-3 text-left">
-                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg text-left">
-                  <CheckCircle size={18} />
-                </div>
-                <span className="text-sm font-bold text-left">ATS Scored: 98%</span>
-              </div>
-              <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full w-[98%] bg-emerald-500"></div>
-              </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* REFINED HERO SECTION */}
+      <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-24">
+        <div className="max-w-[1200px] mx-auto px-6 text-center">
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 mb-8">
+              <Sparkles size={14} />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Version 2.0 is live</span>
             </div>
-          </div>
-        </div>
-      </section>
+            
+            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-6 leading-tight">
+              Build a career that <br />
+              <span className="hero-gradient">stands out.</span>
+            </h1>
 
-      {/* Features Section */}
-      <section id="features" className="py-32 text-left">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
-              Focus on what matters.
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg font-medium">
-              Every feature is designed to simplify your journey and highlight
-              your strengths.
+            <p className="text-lg text-slate-600 dark:text-indigo-100/70 mb-10 leading-relaxed font-medium max-w-2xl mx-auto">
+              The professional resume builder for modern innovators. Clean, ATS-friendly templates designed to get you noticed by top recruiters.
             </p>
-          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
-            {features.map((feature, idx) => (
-              <div
-                key={idx}
-                className="group p-10 rounded-[2rem] bg-white border border-gray-100 hover:border-primary-100 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] transition-all duration-500 text-left"
-              >
-                <div
-                  className={`${feature.bg} ${feature.color} w-14 h-14 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500`}
-                >
-                  <feature.icon size={28} />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-left">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-500 leading-relaxed font-medium text-left">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Templates Section */}
-      <section id="templates" className="py-32 bg-gray-50/50 text-left">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="mb-20 text-center mx-auto">
-            <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight text-center">
-              Pick your style.
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg mb-8 font-medium text-center">
-              Start with a professionally crafted template and make it your own.
-            </p>
-            <Button 
-              variant="secondary" 
-              className="rounded-full px-8 gap-2 group mx-auto"
-              onClick={() => navigate('/templates')}
-            >
-              View All Templates <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-12 text-left">
-            {templates.map((tpl, idx) => (
-              <div key={idx} className="group text-left">
-                <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden bg-white shadow-lg border border-gray-100 group-hover:shadow-2xl group-hover:-translate-y-4 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
-                  <img
-                    src={tpl.image}
-                    alt={tpl.name}
-                    className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center p-8">
-                    <div className="text-white text-center">
-                      <p className="mb-6 font-medium text-gray-200">
-                        Perfect for {tpl.tag.toLowerCase()} roles
-                      </p>
-                      <Button
-                        variant="gradient"
-                        size="md"
-                        className="rounded-full px-8"
-                        onClick={() => handleSelectTemplate(tpl.id)}
-                      >
-                        Select Design
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-8 text-left">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1 text-left">
-                    {tpl.name}
-                  </h3>
-                  <p className="text-sm font-bold text-primary-600 uppercase tracking-widest text-left">
-                    {tpl.tag}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-32 text-center">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="bg-gradient-to-br from-primary-900 to-indigo-950 rounded-[3rem] p-16 lg:p-28 relative overflow-hidden text-center shadow-2xl mx-auto">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-600/20 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-600/20 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2"></div>
-
-            <div className="relative z-10 text-center">
-              <h2 className="text-4xl lg:text-6xl font-black text-white mb-8 tracking-tighter text-center">
-                Start building your <br /> career today.
-              </h2>
-              <p className="text-primary-100/70 text-lg lg:text-xl mb-12 max-w-2xl mx-auto leading-relaxed font-medium text-center">
-                Join 10,000+ people who used ResumeBuilder to land roles at
-                companies like Google, Meta, and Stripe.
-              </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+              <MagneticButton onClick={handleGetStarted} className="shadow-lg shadow-indigo-500/20">
+                Get Started Free <ArrowRight size={18} className="ml-2" />
+              </MagneticButton>
               <Button
-                variant="gradient"
-                size="lg"
-                className="h-16 px-12 text-xl bg-white !from-white !to-white text-primary-900 hover:scale-105 transition-transform rounded-full mx-auto"
-                onClick={handleGetStarted}
+                variant="secondary"
+                size="md"
+                className="h-12 px-6 text-base font-semibold rounded-xl border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm"
+                onClick={() => document.getElementById('templates').scrollIntoView({ behavior: 'smooth' })}
               >
-                {user ? 'Go to Dashboard' : 'Build My Resume — Free'}
+                Explore Designs
               </Button>
             </div>
+          </motion.div>
+
+          {/* COMPACT PRODUCT PREVIEW */}
+          <motion.div style={{ opacity: opacityRange }} className="relative max-w-4xl mx-auto">
+            <div className="relative glass-card rounded-2xl border-slate-200/60 dark:border-slate-800/60 shadow-xl overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200/40 dark:border-slate-700/40">
+                  <Search size={10} className="text-slate-400" />
+                  <span className="text-[9px] font-mono text-slate-400">resume-builder.io/editor</span>
+                </div>
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800"></div>
+              </div>
+              <div className="aspect-[16/9] bg-[#fdfdfd] dark:bg-[#030712] p-8 lg:p-12 overflow-hidden">
+                <div className="max-w-3xl mx-auto grid grid-cols-12 gap-8">
+                  <div className="col-span-8 space-y-8 animate-pulse">
+                    <div className="h-12 w-2/3 bg-slate-100 dark:bg-slate-900 rounded-xl"></div>
+                    <div className="h-3 w-1/2 bg-slate-50 dark:bg-slate-900/50 rounded-lg"></div>
+                    <div className="space-y-3 pt-4">
+                      {[1, 2, 3].map(i => <div key={i} className="h-2.5 bg-slate-50 dark:bg-slate-900/30 rounded-full w-full"></div>)}
+                    </div>
+                  </div>
+                  <div className="col-span-4 space-y-6">
+                    <div className="aspect-square bg-slate-100 dark:bg-slate-900 rounded-2xl"></div>
+                    <div className="h-20 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-500/10 p-4">
+                      <div className="text-white font-bold text-xl mb-1 tracking-tighter">98%</div>
+                      <div className="text-[8px] font-black text-white/60 uppercase tracking-widest">ATS Match</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* COMPACT BENTO FEATURES */}
+      <section id="features" className="py-20 lg:py-24 relative">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <SectionHeading 
+            label="FEATURES" 
+            title="Smarter resume building."
+            description="Focus on your experience. We handle the formatting and optimization."
+          />
+
+          <div className="grid lg:grid-cols-12 gap-6">
+            <BentoCard className="lg:col-span-7 bg-indigo-600 text-white border-none group">
+              <ShieldCheck size={40} className="mb-6 text-indigo-200 group-hover:scale-105 transition-transform" />
+              <h3 className="text-2xl font-bold mb-3 tracking-tight">ATS-Optimized Formatting</h3>
+              <p className="text-indigo-100 text-sm font-medium leading-relaxed max-w-md mb-6">
+                Our templates are mathematically tuned to pass through industry-standard Applicant Tracking Systems with ease.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {['JSON Parsing', 'Keyword Check'].map(tag => (
+                  <span key={tag} className="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[9px] font-bold uppercase tracking-wider">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </BentoCard>
+
+            <BentoCard className="lg:col-span-5 bg-white dark:bg-slate-900/50">
+              <Sparkles size={32} className="mb-6 text-indigo-600" />
+              <h3 className="text-xl font-bold mb-2 tracking-tight">AI Co-pilot</h3>
+              <p className="text-slate-600 dark:text-indigo-100/70 text-sm font-medium">
+                Generate high-impact bullet points and summaries tailored to your target industry in seconds.
+              </p>
+            </BentoCard>
+
+            <BentoCard className="lg:col-span-4 bg-white dark:bg-slate-900/50">
+              <Layout size={32} className="mb-6 text-purple-600" />
+              <h3 className="text-lg font-bold mb-2 tracking-tight">Live Editor</h3>
+              <p className="text-slate-600 dark:text-indigo-100/70 text-xs font-medium">
+                Zero-lag editing. See changes instantly with our high-performance preview engine.
+              </p>
+            </BentoCard>
+
+            <BentoCard className="lg:col-span-4 bg-white dark:bg-slate-900/50">
+              <Download size={32} className="mb-6 text-emerald-600" />
+              <h3 className="text-lg font-bold mb-2 tracking-tight">One-Click Export</h3>
+              <p className="text-slate-600 dark:text-indigo-100/70 text-xs font-medium">
+                Download your resume as a clean, professional PDF ready for any application portal.
+              </p>
+            </BentoCard>
+
+            <BentoCard className="lg:col-span-4 bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900">
+              <Github size={32} className="mb-6 opacity-80" />
+              <h3 className="text-lg font-bold mb-2 tracking-tight">Open Source</h3>
+              <p className="text-xs font-medium opacity-70">
+                Transparent and community-driven. Your professional data remains private and secure.
+              </p>
+            </BentoCard>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-white pt-24 pb-12 border-t border-gray-100 text-left">
-        <div className="max-w-7xl mx-auto px-6 text-left">
-          <div className="grid md:grid-cols-4 gap-12 mb-20 text-left">
-            <div className="col-span-1 md:col-span-1 text-left">
-              <div className="flex items-center gap-2.5 mb-8 text-left">
-                <div className="w-8 h-8 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 text-left">
-                  <FileText className="text-white text-left" size={18} />
-                </div>
-                <span className="text-xl font-bold tracking-tight text-gray-900 text-left">
-                  ResumeBuilder
-                </span>
-              </div>
-              <p className="text-gray-500 font-medium leading-relaxed max-w-xs text-left">
-                Making professional resume building accessible, beautiful, and
-                free for everyone.
-              </p>
-            </div>
+      {/* COMPACT COMPARISON */}
+      <section id="comparison" className="py-20 lg:py-24 bg-slate-50/50 dark:bg-slate-950/20">
+        <div className="max-w-4xl mx-auto px-6">
+          <SectionHeading 
+            label="THE CHOICE" 
+            title="The better alternative."
+            description="Stop wrestling with Word and overpriced builders."
+          />
 
-            <div className="text-left">
-              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest text-left">
-                Platform
-              </h4>
-              <ul className="space-y-4 text-gray-500 font-medium text-left">
-                <li><Link to="/editor" className="hover:text-primary-600 transition-colors">Editor</Link></li>
-                <li><a href="#templates" className="hover:text-primary-600 transition-colors">Templates</a></li>
-                <li><a href="#features" className="hover:text-primary-600 transition-colors">Features</a></li>
-              </ul>
-            </div>
+          <div className="glass-card rounded-2xl overflow-hidden border-slate-200/60 dark:border-slate-800/60">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                  <th className="p-5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Capability</th>
+                  <th className="p-5 text-[9px] font-bold text-indigo-600 uppercase tracking-widest">ResumeBuilder</th>
+                  <th className="p-5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Legacy Tools</th>
+                </tr>
+              </thead>
+              <tbody className="text-slate-700 dark:text-indigo-100">
+                {[
+                  { name: 'Unlimited Resumes', us: true, them: false },
+                  { name: 'AI Generation', us: true, them: false },
+                  { name: 'ATS Validation', us: true, them: false },
+                  { name: 'No Paywalls', us: true, them: false },
+                ].map((row, i) => (
+                  <tr key={i} className="border-b border-slate-100 dark:border-slate-800 last:border-none">
+                    <td className="p-5 text-sm font-semibold">{row.name}</td>
+                    <td className="p-5"><Check size={16} className="text-emerald-500" /></td>
+                    <td className="p-5">
+                      {row.them ? <Check size={16} className="text-slate-300" /> : <X size={16} className="text-slate-300" />}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-            <div className="text-left">
-              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest text-left">
-                Connect
-              </h4>
-              <ul className="space-y-4 text-gray-500 font-medium text-left">
-                <li><a href="#" className="hover:text-primary-600 transition-colors">Twitter</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">GitHub</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">LinkedIn</a></li>
-              </ul>
-            </div>
-
-            <div className="text-left">
-              <h4 className="font-bold text-gray-900 mb-8 text-sm uppercase tracking-widest text-left">
-                Legal
-              </h4>
-              <ul className="space-y-4 text-gray-500 font-medium text-left">
-                <li><a href="#" className="hover:text-primary-600 transition-colors">Privacy</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">Terms</a></li>
-              </ul>
-            </div>
+      {/* BALANCED TEMPLATES */}
+      <section id="templates" className="py-20 lg:py-24">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-8">
+            <SectionHeading 
+              label="DESIGNS" 
+              title="Pick your template."
+              description="Surgical-grade resume designs for every industry."
+              center={false}
+            />
+            <Button 
+              variant="secondary" 
+              className="rounded-xl px-6 h-11 text-sm font-bold gap-2 group border-slate-200 dark:border-slate-800"
+              onClick={() => navigate('/templates')}
+            >
+              Browse Library <ExternalLink size={14} className="group-hover:translate-x-0.5 transition-transform" />
+            </Button>
           </div>
 
-          <div className="pt-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6 text-left">
-            <p className="text-gray-400 text-sm font-medium italic text-left">
-              © 2026 ResumeBuilder. Built with precision.
-            </p>
-            <div className="flex gap-10 text-left">
-              <Github className="text-gray-300 hover:text-gray-600 cursor-pointer transition-colors" size={20} />
-              <Twitter className="text-gray-300 hover:text-gray-600 cursor-pointer transition-colors" size={20} />
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+            {[
+              { id: 'modern-1', name: 'Executive', image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=600&h=800' },
+              { id: 'creative-1', name: 'Creative', image: 'https://images.unsplash.com/photo-1626197031507-c17099753214?q=80&w=600&h=800' },
+              { id: 'minimal-1', name: 'Minimal', image: 'https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?q=80&w=600&h=800' },
+            ].map((tpl, idx) => (
+              <motion.div 
+                key={idx}
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.3 }}
+                className="group cursor-pointer"
+                onClick={() => handleSelectTemplate(tpl.id)}
+              >
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-lg border border-slate-100 dark:border-slate-800">
+                  <img src={tpl.image} alt={tpl.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                  <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-8">
+                    <Button variant="gradient" className="w-full h-11 rounded-xl font-bold text-xs">
+                      USE TEMPLATE
+                    </Button>
+                  </div>
+                </div>
+                <div className="mt-5 flex items-center justify-between px-1">
+                  <div>
+                    <h3 className="text-lg font-bold dark:text-slate-50">{tpl.name}</h3>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Professional</p>
+                  </div>
+                  <ArrowRight size={18} className="text-slate-300 group-hover:text-indigo-600 transition-colors" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* COMPACT CTA SECTION */}
+      <section className="py-20 lg:pb-32">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative rounded-3xl bg-slate-900 p-12 lg:p-24 overflow-hidden text-center shadow-2xl"
+          >
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <h2 className="text-3xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
+                Accelerate your <br />
+                <span className="text-indigo-400">career journey.</span>
+              </h2>
+              <p className="text-indigo-100/60 text-base lg:text-lg mb-10 font-medium leading-relaxed">
+                Free forever. Unlimited resumes. Join 10,000+ candidates at companies like Stripe, Meta, and Google.
+              </p>
+              <MagneticButton onClick={handleGetStarted} className="bg-white !from-white !to-white text-slate-950 shadow-xl shadow-white/5">
+                Build My Resume Now
+              </MagneticButton>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* REFINED FOOTER */}
+      <footer className="py-16 border-t border-slate-100 dark:border-slate-900">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="grid lg:grid-cols-12 gap-16 mb-16">
+            <div className="lg:col-span-6">
+              <div className="flex items-center gap-2.5 mb-6">
+                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
+                  <FileText className="text-white" size={18} />
+                </div>
+                <span className="text-xl font-bold tracking-tight dark:text-slate-50">
+                  Resume<span className="text-indigo-600">Builder</span>
+                </span>
+              </div>
+              <p className="text-slate-500 dark:text-indigo-100/50 text-sm font-medium leading-relaxed max-w-xs">
+                Making professional resume building accessible, elegant, and effective for everyone.
+              </p>
+            </div>
+            <div className="lg:col-span-6 grid grid-cols-2 md:grid-cols-3 gap-8">
+              {[
+                { title: 'Product', links: ['Editor', 'Templates', 'AI Assistant'] },
+                { title: 'Company', links: ['About', 'Careers', 'Open Source'] },
+                { title: 'Legal', links: ['Privacy', 'Terms', 'Security'] },
+              ].map(col => (
+                <div key={col.title}>
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-slate-50 mb-6">{col.title}</h4>
+                  <ul className="space-y-3">
+                    {col.links.map(l => (
+                      <li key={l}><a href="#" className="text-sm text-slate-500 dark:text-indigo-100/50 font-semibold hover:text-indigo-600 transition-colors">{l}</a></li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              © 2026 RESUMEBUILDER.IO
+            </div>
+            <div className="flex gap-8">
+              {[Twitter, Github, Linkedin].map((Icon, i) => (
+                <Icon key={i} className="text-slate-300 hover:text-indigo-600 cursor-pointer transition-colors" size={18} />
+              ))}
             </div>
           </div>
         </div>
