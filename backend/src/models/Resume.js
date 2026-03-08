@@ -76,10 +76,14 @@ const resumeSchema = new mongoose.Schema({
     default: 'minimal-1',
   },
   settings: {
+    themeId: { type: String, default: 'classic-blue' },
     fontSize: { type: String, default: '12px' },
     fontFamily: { type: String, default: 'Inter' },
     colorScheme: { type: String, default: '#000000' },
     paperSize: { type: String, default: 'A4' },
+    lineHeight: { type: String, default: '1.5' },
+    pageMargin: { type: String, default: '12mm' },
+    visibleSections: [{ type: String }],
   }
 }, {
   timestamps: true,

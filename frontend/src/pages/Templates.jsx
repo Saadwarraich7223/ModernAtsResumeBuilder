@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Layout, 
-  ShieldCheck, 
-  Sparkles, 
-  Briefcase, 
   ArrowRight,
   Search,
-  CheckCircle2,
   FileText,
-  Code,
-  Zap,
-  PenTool
+  ExternalLink,
+  Filter,
+  Layout,
+  Sun,
+  Moon,
+  ChevronRight,
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import useResumeStore from '../store/resumeStore';
 
 const categories = [
-  { id: 'all', name: 'All Templates' },
+  { id: 'all', name: 'All Designs' },
   { id: 'modern', name: 'Modern' },
   { id: 'minimal', name: 'Minimal' },
-  { id: 'professional', name: 'Professional' },
+  { id: 'professional', name: 'Corporate' },
   { id: 'creative', name: 'Creative' },
   { id: 'tech', name: 'Tech & Logic' },
 ];
@@ -28,7 +27,7 @@ const categories = [
 const allTemplates = [
   { 
     id: 'minimal-1', 
-    name: 'Minimalist', 
+    name: 'Minimalist Sans', 
     category: 'minimal',
     description: 'Clean, simple, and ATS-friendly.',
     image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600&h=800',
@@ -36,7 +35,7 @@ const allTemplates = [
   },
   { 
     id: 'modern-1', 
-    name: 'Modern Edge', 
+    name: 'Modern Executive', 
     category: 'modern',
     description: 'Two-column stylish and organized layout.',
     image: 'https://images.unsplash.com/photo-1626197031507-c17099753214?auto=format&fit=crop&q=80&w=600&h=800',
@@ -80,7 +79,7 @@ const allTemplates = [
     category: 'professional',
     description: 'Elegant and sophisticated for leadership roles.',
     image: 'https://images.unsplash.com/photo-1506784919141-93784117406c?auto=format&fit=crop&q=80&w=600&h=800',
-    tag: 'Premium'
+    tag: 'Leadership'
   },
   { 
     id: 'tech-1', 
@@ -104,6 +103,13 @@ const Templates = () => {
   const navigate = useNavigate();
   const { setTemplateId } = useResumeStore();
   const [activeCategory, setActiveCategory] = useState('all');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDarkMode) root.classList.add('dark');
+    else root.classList.remove('dark');
+  }, [isDarkMode]);
 
   const filteredTemplates = activeCategory === 'all' 
     ? allTemplates 
@@ -115,50 +121,66 @@ const Templates = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans selection:bg-primary-100 relative text-left">
-      {/* SaaS Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 via-white to-purple-50/30"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+    <div className={`min-h-screen relative overflow-x-hidden font-sans selection:bg-indigo-500/20 transition-colors duration-500 ${isDarkMode ? 'dark bg-[#020617]' : 'bg-white'}`}>
+      <div className="noise-bg"></div>
+      
+      {/* Background Elements */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.06),transparent_70%)]"></div>
+        <div className="absolute top-[20%] right-0 w-[800px] h-[800px] bg-purple-500/5 rounded-full blur-[140px]"></div>
       </div>
 
-      {/* Navbar */}
-      <nav className="sticky top-0 w-full bg-white/60 backdrop-blur-xl border-b border-gray-100/50 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center text-left">
-          <div className="flex items-center gap-2.5 cursor-pointer text-left" onClick={() => navigate('/')}>
-            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 text-left">
-              <FileText className="text-white text-left" size={20} />
+      {/* Refined Navbar */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 py-5`}>
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="glass-card rounded-2xl flex items-center justify-between px-6 h-14 border-slate-200/60 dark:border-slate-800/60">
+            <div className="flex items-center gap-2.5 group cursor-pointer" onClick={() => navigate('/')}>
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg transition-transform group-hover:scale-105">
+                <FileText className="text-white" size={18} />
+              </div>
+              <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50 font-heading">
+                Resume<span className="text-indigo-600">Builder</span>
+              </span>
             </div>
-            <span className="text-xl font-bold tracking-tight text-gray-900 text-left">ResumeBuilder</span>
+
+            <div className="flex items-center gap-6">
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="rounded-xl px-5 h-9 font-bold text-xs border-slate-200 dark:border-slate-800 dark:bg-slate-900" 
+                onClick={() => navigate('/dashboard')}
+              >
+                My Dashboard
+              </Button>
+            </div>
           </div>
-          
-          <Button variant="secondary" size="md" className="rounded-full px-6" onClick={() => navigate('/editor')}>
-            Go to Editor
-          </Button>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 py-20 text-left">
-        <div className="text-center mb-16 space-y-4">
-           <h1 className="text-4xl lg:text-6xl font-black tracking-tighter text-gray-900">
-             Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600">Perfect Design</span>
+      <main className="max-w-[1200px] mx-auto px-6 pt-32 pb-20">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16 max-w-2xl mx-auto"
+        >
+           <h1 className="text-3xl lg:text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-6 font-heading">
+             Pick your <span className="hero-gradient">starting design.</span>
            </h1>
-           <p className="text-gray-500 max-w-2xl mx-auto text-lg font-medium">
-             Our templates are crafted by recruitment experts and tested for ATS compatibility. 
-             Start with a design that fits your industry.
+           <p className="text-base lg:text-lg text-slate-600 dark:text-indigo-100/70 font-medium leading-relaxed">
+             Surgical-grade resume templates crafted by career experts. Change your design anytime within the editor.
            </p>
-        </div>
+        </motion.div>
 
         {/* Categories Bar */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+              className={`px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 uppercase tracking-widest ${
                 activeCategory === cat.id
-                  ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/25'
-                  : 'bg-white border border-gray-100 text-gray-500 hover:border-primary-200 hover:text-primary-600 shadow-sm'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-indigo-500/30 hover:text-indigo-600 dark:hover:text-indigo-400'
               }`}
             >
               {cat.name}
@@ -167,66 +189,88 @@ const Templates = () => {
         </div>
 
         {/* Templates Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 text-left">
-          {filteredTemplates.map((tpl, idx) => (
-            <div key={idx} className="group animate-fade-in text-left" style={{ animationDelay: `${idx * 100}ms` }}>
-              <div className="relative aspect-[3/4] rounded-[2.5rem] overflow-hidden bg-white shadow-lg border border-gray-100 group-hover:shadow-2xl group-hover:-translate-y-4 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
-                <img src={tpl.image} alt={tpl.name} className="w-full h-full object-cover grayscale-[15%] group-hover:grayscale-0 transition-all duration-700" />
-                
-                <div className="absolute top-6 right-6">
-                   <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] bg-white/90 backdrop-blur shadow-sm text-primary-600">
-                      {tpl.tag}
-                   </span>
-                </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+          <AnimatePresence mode='popLayout'>
+            {filteredTemplates.map((tpl, idx) => (
+              <motion.div 
+                layout
+                key={tpl.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                className="group cursor-pointer"
+                onClick={() => handleSelect(tpl.id)}
+              >
+                <div className="relative aspect-[3/4.2] rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 shadow-lg border border-slate-100 dark:border-slate-800 group-hover:shadow-2xl transition-all duration-500">
+                  <img src={tpl.image} alt={tpl.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+                  
+                  <div className="absolute top-5 left-5">
+                    <div className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] bg-white/90 dark:bg-slate-900/90 backdrop-blur shadow-sm text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                        {tpl.tag}
+                    </div>
+                  </div>
 
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center p-12">
-                  <div className="text-white text-center space-y-6">
-                     <p className="font-medium text-gray-200 leading-relaxed text-center">{tpl.description}</p>
-                     <Button 
-                       variant="gradient" 
-                       size="lg" 
-                       className="rounded-full w-full py-4 !from-white !to-white text-primary-900"
-                       onClick={() => handleSelect(tpl.id)}
-                     >
-                       Select Design
-                     </Button>
+                  <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
+                     <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                        <p className="text-white text-xs font-medium mb-6 opacity-80 leading-relaxed">{tpl.description}</p>
+                        <Button 
+                          variant="gradient" 
+                          className="w-full h-11 rounded-xl font-bold text-xs shadow-xl shadow-indigo-500/30"
+                        >
+                          Select This Design
+                        </Button>
+                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="mt-8 flex justify-between items-center px-4 text-left">
-                <div className="text-left">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1 text-left">{tpl.name}</h3>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">{tpl.category}</p>
+                <div className="mt-6 flex justify-between items-center px-2">
+                  <div className="text-left">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{tpl.name}</h3>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{tpl.category}</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
+                    <ArrowRight size={18} />
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <ArrowRight size={20} />
-                </div>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
+
+        {/* Empty State */}
+        {filteredTemplates.length === 0 && (
+          <div className="py-32 text-center">
+            <Layout size={48} className="mx-auto text-slate-200 mb-6" />
+            <p className="text-slate-500 font-medium">No templates found in this category.</p>
+          </div>
+        )}
       </main>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 max-w-7xl mx-auto text-left">
-        <div className="bg-white rounded-[3rem] p-12 lg:p-20 text-center border border-gray-100 shadow-xl relative overflow-hidden mx-auto">
-           <div className="absolute top-0 left-0 w-32 h-32 bg-primary-100/30 blur-3xl rounded-full"></div>
-           <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-6 tracking-tight relative z-10 text-center">
-             Not sure which one to pick?
+      <section className="py-20 px-6 max-w-[1200px] mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-card rounded-3xl p-10 lg:p-20 text-center border-slate-200 dark:border-slate-800 relative overflow-hidden"
+        >
+           <div className="absolute top-0 left-0 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full"></div>
+           <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-slate-50 mb-4 tracking-tight relative z-10 font-heading">
+             Unsure which one to choose?
            </h2>
-           <p className="text-gray-500 max-w-xl mx-auto mb-10 font-medium relative z-10 text-center">
-             You can change your template at any time within the editor without losing your progress. 
-             Experiment and find your perfect fit!
+           <p className="text-slate-600 dark:text-indigo-100/70 max-w-xl mx-auto mb-10 font-medium relative z-10 leading-relaxed">
+             You can switch templates at any time within the editor. 
+             Experiment with different styles to see which fits your profile best.
            </p>
-           <Button variant="gradient" size="lg" className="rounded-full px-12" onClick={() => navigate('/editor')}>
-              Open Editor
+           <Button variant="gradient" className="rounded-xl h-12 px-10 shadow-lg shadow-indigo-500/20" onClick={() => navigate('/editor')}>
+              Open Editor <ChevronRight size={18} className="ml-2" />
            </Button>
-        </div>
+        </motion.div>
       </section>
 
-      {/* Footer (Minimal) */}
-      <footer className="py-12 border-t border-gray-100 text-center">
-         <p className="text-sm font-bold text-gray-400 uppercase tracking-widest italic text-center">© 2026 ResumeBuilder. All Rights Reserved.</p>
+      {/* Footer (Refined) */}
+      <footer className="py-12 border-t border-slate-100 dark:border-slate-900 text-center">
+         <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">© 2026 ResumeBuilder. Built for the modern professional.</p>
       </footer>
     </div>
   );

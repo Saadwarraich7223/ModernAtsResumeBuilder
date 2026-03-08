@@ -13,7 +13,6 @@ import {
   Download,
   Palette,
   CheckCircle2,
-  Circle,
   ChevronRight,
   Eye,
   Sparkles,
@@ -22,11 +21,15 @@ import {
   FolderGit2,
   Award,
   Languages as LangIcon,
-  GripVertical
+  GripVertical,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import { motion, AnimatePresence } from "framer-motion";
 import useResumeStore from "../store/resumeStore";
+import useUIStore from "../store/uiStore";
 import PersonalInfo from "../components/editor/PersonalInfo";
 import ResumePreview from "../components/editor/ResumePreview";
 import Button from "../components/ui/Button";
@@ -73,6 +76,7 @@ const Editor = () => {
   const queryParams = new URLSearchParams(location.search);
   const resumeId = queryParams.get('id');
 
+  const { isDarkMode, toggleDarkMode } = useUIStore();
   const [activeSection, setActiveSection] = useState("personal");
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
   const { saveResume, title, setTitle, data, loadResume, resetResume, settings } = useResumeStore();
@@ -89,14 +93,9 @@ const Editor = () => {
     if (resumeId) {
       loadResume(resumeId);
     } else {
-      // If we are starting new, we might have already selected a template 
-      // on the Templates page. We want to keep that templateId.
       resetResume(true);
     }
-
-    // Cleanup on unmount if needed, but here we just want to ensure 
-    // we don't reset state when we shouldn't.
-  }, [resumeId]); // Remove loadResume/resetResume from deps to avoid re-runs on state changes
+  }, [resumeId]);
 
   const handlePrint = useReactToPrint({
     contentRef: resumeRef,
@@ -110,17 +109,14 @@ const Editor = () => {
     }
   };
 
-  // Progress Calculation
   const progress = useMemo(() => {
-    let totalFields = 5; // Major sections
+    let totalFields = 5;
     let completedFields = 0;
-
     if (data.personalInfo.fullName) completedFields++;
     if (data.summary) completedFields++;
     if (data.workExperience?.length > 0) completedFields++;
     if (data.education?.length > 0) completedFields++;
     if (data.skills?.length > 0) completedFields++;
-
     return Math.round((completedFields / totalFields) * 100);
   }, [data]);
 
@@ -159,40 +155,36 @@ const Editor = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#fafafa] text-gray-900 font-sans selection:bg-primary-100 overflow-hidden relative">
-      {/* SaaS Background Elements */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-      </div>
+    <div className={`flex flex-col h-screen overflow-hidden relative font-sans selection:bg-indigo-500/20 transition-colors duration-500 ${isDarkMode ? 'dark bg-[#020617]' : 'bg-[#f8fafc]'}`}>
+      <div className="noise-bg"></div>
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 h-20 bg-white/70 backdrop-blur-2xl border-b border-gray-100 z-30 text-left">
-        <div className="flex items-center gap-6 flex-1 text-left">
+      <header className="flex items-center justify-between px-6 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 z-30">
+        <div className="flex items-center gap-4 flex-1">
           <button
             onClick={() => navigate("/dashboard")}
-            className="p-2 hover:bg-gray-100 rounded-xl text-gray-400 transition-colors"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 transition-colors"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={18} />
           </button>
-          <div className="h-8 w-px bg-gray-100 hidden md:block"></div>
-          <div className="flex flex-col text-left">
+          <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
+          <div className="flex flex-col min-w-0">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-transparent border-none p-0 text-lg font-black tracking-tight text-gray-900 focus:ring-0 w-full max-w-[200px] md:max-w-md text-left outline-none"
+              className="bg-transparent border-none p-0 text-sm font-bold tracking-tight text-slate-900 dark:text-slate-50 focus:ring-0 w-full truncate outline-none"
               placeholder="Resume Title..."
             />
-            <div className="flex items-center gap-2 mt-0.5 text-left">
-              <div className="h-1 w-24 bg-gray-100 rounded-full overflow-hidden">
+            <div className="flex items-center gap-2 mt-0.5">
+              <div className="h-1 w-16 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary-600 transition-all duration-500"
+                  className="h-full bg-indigo-600 transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                {progress}% Complete
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                {progress}%
               </span>
             </div>
           </div>
@@ -201,36 +193,37 @@ const Editor = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowPreviewMobile(!showPreviewMobile)}
-            className="lg:hidden p-3 bg-gray-50 text-gray-600 rounded-xl hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-100 transition-colors"
           >
-            <Eye size={20} />
+            <Eye size={18} />
           </button>
+          
           <Button
             variant="secondary"
-            size="md"
-            className="hidden md:flex rounded-full px-6 border-gray-200"
+            size="sm"
+            className="hidden md:flex rounded-xl px-4 h-9 font-bold text-xs border-slate-200 dark:border-slate-800 dark:bg-slate-900"
             onClick={handlePrint}
           >
-            <Download size={18} className="mr-2" /> Download
+            <Download size={16} className="mr-2" /> PDF
           </Button>
           <Button
             variant="gradient"
-            size="md"
-            className="rounded-full px-8 shadow-lg shadow-primary-500/20"
+            size="sm"
+            className="rounded-xl px-6 h-9 font-bold text-xs shadow-sm"
             onClick={handleSave}
           >
-            <Save size={18} className="mr-2" /> Save
+            <Save size={16} className="mr-2" /> Save
           </Button>
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-20 md:w-72 bg-white border-r border-gray-100 flex flex-col py-8 z-20 text-left">
-          <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-hide text-left">
+        {/* Refined Sidebar */}
+        <aside className="w-16 md:w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col py-6 z-20">
+          <nav className="flex-1 px-2.5 space-y-1 overflow-y-auto scrollbar-hide">
             {dynamicSections.map((section) => {
               const complete = isSectionComplete(section.id);
-              const isOptional = !!optionalSectionsMap[section.id];
+              const isActive = activeSection === section.id;
               return (
                 <button
                   key={section.id}
@@ -238,81 +231,79 @@ const Editor = () => {
                     setActiveSection(section.id);
                     setShowPreviewMobile(false);
                   }}
-                  className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 relative group text-left ${
-                    activeSection === section.id
-                      ? "bg-primary-600 text-white shadow-lg shadow-primary-500/25"
-                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all relative group ${
+                    isActive
+                      ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                      : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
-                  <div
-                    className={`shrink-0 transition-transform duration-300 ${activeSection === section.id ? "scale-110" : "group-hover:scale-110"}`}
-                  >
-                    <section.icon size={22} />
+                  <div className={`shrink-0 transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`}>
+                    <section.icon size={18} />
                   </div>
                   <span className="hidden md:block flex-1 text-left truncate">
                     {section.label}
                   </span>
-                  {complete &&
-                    section.id !== "import" &&
-                    section.id !== "settings" &&
-                    section.id !== "manager" && (
-                      <CheckCircle2
-                        size={16}
-                        className={`hidden md:block ${activeSection === section.id ? "text-white/80" : "text-emerald-500"}`}
-                      />
-                    )}
-                  {activeSection === section.id && (
-                    <div className="absolute right-2 w-1.5 h-1.5 bg-white rounded-full hidden md:block"></div>
+                  {complete && !['import', 'settings', 'manager'].includes(section.id) && (
+                    <CheckCircle2
+                      size={14}
+                      className={`hidden md:block ${isActive ? "text-indigo-600/80" : "text-emerald-500"}`}
+                    />
                   )}
                 </button>
               );
             })}
           </nav>
 
-          {/* AI Status Indicator */}
-          <div className="px-6 mt-6 hidden md:block">
-            <div className="p-5 bg-indigo-50 rounded-3xl border border-indigo-100 space-y-3 relative overflow-hidden group text-left">
-              <div className="absolute -top-4 -right-4 w-16 h-16 bg-indigo-200/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
-              <p className="text-xs font-black text-indigo-900 uppercase tracking-widest flex items-center gap-2 text-left">
-                <Sparkles size={14} /> AI Power Active
+          {/* AI Status Pill */}
+          <div className="px-4 mt-4 hidden md:block">
+            <div className="p-4 bg-indigo-600 rounded-2xl relative overflow-hidden group shadow-lg shadow-indigo-500/20">
+              <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 blur-xl rounded-full -mr-8 -mt-8"></div>
+              <p className="text-[10px] font-black text-indigo-100 uppercase tracking-widest flex items-center gap-2 mb-1.5">
+                <Sparkles size={12} /> AI Active
               </p>
-              <p className="text-[11px] text-indigo-700/80 font-bold leading-relaxed text-left">
-                Powered by OpenAI GPT-4o-mini for premium resume generation.
-              </p>
-              <button onClick={() => setActiveSection('ats')} className="text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1">
-                Run ATS Scan <ChevronRight size={12} />
+              <button 
+                onClick={() => setActiveSection('ats')} 
+                className="text-[10px] font-bold text-white hover:underline flex items-center gap-1"
+              >
+                Scan Resume <ChevronRight size={10} />
               </button>
             </div>
           </div>
         </aside>
 
-        {/* Main Editor Area */}
+        {/* Form Area */}
         <main
           className={`flex-1 overflow-y-auto p-4 md:p-8 transition-all duration-500 ${showPreviewMobile ? "hidden" : "block"}`}
         >
-          <div className="max-w-5xl mx-auto">
-            <div className="bg-white rounded-[2.5rem] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 md:p-10 relative overflow-hidden text-left">
-              {/* Decorative Gradient Line */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-600 via-indigo-600 to-purple-600 opacity-80"></div>
+          <div className="max-w-4xl mx-auto">
+            <motion.div 
+              key={activeSection}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-10 relative overflow-hidden text-left"
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 opacity-50"></div>
               {renderSection()}
-            </div>
+            </motion.div>
           </div>
         </main>
 
-        {/* Preview Area */}
+        {/* Enhanced Preview Area */}
         <section
-          className={`flex-1 bg-gray-100/50 p-6 md:p-12 overflow-y-auto border-l border-gray-100 transition-all duration-500 lg:block ${showPreviewMobile ? "block fixed inset-0 z-40 bg-white" : "hidden"}`}
+          className={`flex-1 bg-slate-100 dark:bg-slate-950 p-6 md:p-10 overflow-y-auto border-l border-slate-200 dark:border-slate-800 transition-all duration-500 lg:block ${showPreviewMobile ? "block fixed inset-0 z-40 bg-white dark:bg-slate-950" : "hidden"}`}
         >
           {showPreviewMobile && (
             <button
               onClick={() => setShowPreviewMobile(false)}
-              className="fixed top-6 right-6 z-50 p-4 bg-gray-900 text-white rounded-2xl shadow-xl"
+              className="fixed top-6 right-6 z-50 p-3 bg-slate-900 text-white rounded-xl shadow-xl"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
           )}
           <div className="flex justify-center min-h-full">
-            <ResumePreview ref={resumeRef} />
+            <div className="shadow-2xl shadow-slate-900/10 dark:shadow-indigo-500/5 origin-top scale-[0.85] xl:scale-[0.95] 2xl:scale-100">
+              <ResumePreview ref={resumeRef} />
+            </div>
           </div>
         </section>
       </div>

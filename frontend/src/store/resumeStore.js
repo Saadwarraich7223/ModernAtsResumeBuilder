@@ -1,22 +1,22 @@
-import { create } from 'zustand';
-import api from '../api/axios';
+import { create } from "zustand";
+import api from "../api/axios";
 
 const initialState = {
-  title: 'Untitled Resume',
+  title: "Untitled Resume",
   aiLoading: false,
   aiError: null,
   data: {
     personalInfo: {
-      fullName: '',
-      email: '',
-      phone: '',
-      address: '',
-      jobTitle: '',
-      website: '',
-      github: '',
-      linkedin: '',
+      fullName: "",
+      email: "",
+      phone: "",
+      address: "",
+      jobTitle: "",
+      website: "",
+      github: "",
+      linkedin: "",
     },
-    summary: '',
+    summary: "",
     workExperience: [],
     education: [],
     skills: [],
@@ -25,15 +25,15 @@ const initialState = {
     languages: [],
     customSections: [],
   },
-  templateId: 'minimal-1',
+  templateId: "minimal-1",
   settings: {
-    themeId: 'classic-blue',
-    fontSize: '12px',
-    fontFamily: 'Inter',
-    colorScheme: '#000000',
-    paperSize: 'A4',
-    lineHeight: '1.5',
-    pageMargin: '20mm',
+    themeId: "classic-blue",
+    fontSize: "12px",
+    fontFamily: "Inter",
+    colorScheme: "#000000",
+    paperSize: "A4",
+    lineHeight: "1.5",
+    pageMargin: "12mm",
   },
 };
 
@@ -84,10 +84,10 @@ const useResumeStore = create((set, get) => ({
   fetchResumes: async () => {
     set({ loading: true });
     try {
-      const response = await api.get('/resumes');
+      const response = await api.get("/resumes");
       set({ resumes: response.data, loading: false });
     } catch (error) {
-      set({ error: 'Failed to fetch resumes', loading: false });
+      set({ error: "Failed to fetch resumes", loading: false });
     }
   },
 
@@ -95,10 +95,17 @@ const useResumeStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await api.get(`/resumes/${id}`);
+
       const { title, data, templateId, settings } = response.data;
-      set({ title, data, templateId, settings, loading: false });
+      set({ 
+        title, 
+        data, 
+        templateId, 
+        settings: { ...initialState.settings, ...settings }, 
+        loading: false 
+      });
     } catch (error) {
-      set({ error: 'Failed to load resume', loading: false });
+      set({ error: "Failed to load resume", loading: false });
     }
   },
 
@@ -106,14 +113,24 @@ const useResumeStore = create((set, get) => ({
     const { title, data, templateId, settings } = get();
     try {
       if (id) {
-        const response = await api.put(`/resumes/${id}`, { title, data, templateId, settings });
+        const response = await api.put(`/resumes/${id}`, {
+          title,
+          data,
+          templateId,
+          settings,
+        });
         return response.data._id;
       } else {
-        const response = await api.post('/resumes', { title, data, templateId, settings });
+        const response = await api.post("/resumes", {
+          title,
+          data,
+          templateId,
+          settings,
+        });
         return response.data._id;
       }
     } catch (error) {
-      set({ error: 'Failed to save resume' });
+      set({ error: "Failed to save resume" });
     }
   },
 
@@ -124,7 +141,7 @@ const useResumeStore = create((set, get) => ({
         resumes: state.resumes.filter((r) => r._id !== id),
       }));
     } catch (error) {
-      set({ error: 'Failed to delete resume' });
+      set({ error: "Failed to delete resume" });
     }
   },
 

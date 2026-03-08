@@ -1,41 +1,40 @@
 # ResumeBuilder 2.0 🚀
 
-A premium, open-source, and unlimited Resume Builder Web App. Build professional, ATS-friendly resumes for free with a modern, high-performance editor and a powerful visual engine.
+A world-class, open-source, and unlimited Resume Builder Web App. Redesigned with a premium SaaS aesthetic (Stripe/Linear style), featuring a high-performance editor, AI-powered content generation, and pixel-perfect templates.
 
 ![Landing Preview](https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=1200)
 
 ## ✨ Features
 
-- **💎 Premium UI/UX:** Stunning SaaS-style design with soft gradients, smooth animations, and a clutter-free interface.
-- **📊 User Dashboard:** Centralized workspace to manage, edit, and duplicate multiple resumes.
-- **📝 Section Management:** Toggle optional sections (Projects, Certifications, Languages) or create entirely custom ones (e.g., Volunteering).
-- **🔐 Secure Auth:** JWT-based authentication system with persistent sessions.
-- **⚡ Live Preview Editor:** Real-time feedback with integrated A4 paper preview and zoom controls (40% to 150%).
-- **🎨 Dynamic Theme System:**
-  - **8+ Pro Themes:** Instant visual transformation across 3 categories (Light, Minimal, Modern).
-  - **Visual Engine:** Dynamic control over primary colors, gradients, headings, and divider styles.
-- **🧠 Auto Resume AI Assistant:**
-  - **Smart Summary:** Generate professional bios using full-resume context.
-  - **Bullet Enhancer:** Refine experiences with achievement-oriented AI coaching.
-  - **ATS Scan:** Identify missing keywords and optimize for recruitment software.
-- **🤖 Smart Import:** Pattern-based text matching to quickly populate your resume details.
-- **📚 7+ Professional Templates:** Categorized designs (Modern, Minimal, Professional, Creative, Tech, Compact).
-- **📄 High-Fidelity Export:** One-click, high-resolution PDF generation.
+- **💎 World-Class UI/UX:** Stunning SaaS-style design featuring glassmorphism, bento-grid layouts, smooth Framer Motion animations, and noise-textured backgrounds.
+- **🌓 Global Theme Engine:** Centralized Dark/Light mode switcher on the landing page that intelligently scales across the entire application.
+- **📊 User Dashboard:** Sophisticated workspace to manage multiple professional profiles with compact, interactive resume cards.
+- **📝 Section Management:** Granular control over visibility. Toggle Projects, Certifications, and Languages, or create limitless Custom Sections.
+- **🔐 Secure Auth:** Enterprise-grade JWT authentication with persistent, encrypted sessions.
+- **⚡ Pro-Stream Editor:** Real-time, zero-latency feedback engine with integrated A4 preview and high-fidelity progress tracking.
+- **🎨 Elite Theme System:**
+  - **8+ Professional Palettes:** Instantly switch between Modern, Minimal, and Corporate categories.
+  - **Visual Control:** Adjust margins, line heights, font sizes, and fonts (Inter, Sora, JetBrains Mono) with instant persistence.
+- **🧠 AI Resume Co-pilot:**
+  - **Mistral-Powered:** Generate high-impact summaries and achievement-oriented bullet points.
+  - **ATS Scan:** Intelligent keyword analysis to ensure your resume survives the "black hole" of recruitment software.
+- **📚 9+ Specialized Templates:** Precision-engineered designs optimized for visibility and high-contrast readability (Modern, Swiss Minimal, Executive, Technologist).
+- **📄 Vector PDF Export:** High-resolution, one-click PDF generation that ensures what you see is exactly what the recruiter gets.
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React 18, Vite, Tailwind CSS 4, Zustand, Axios, Lucide React.
+- **Frontend:** React 18, Vite, Tailwind CSS 4, Framer Motion, Zustand, Axios, Lucide React.
 - **Backend:** Node.js, Express, MongoDB (Mongoose).
-- **AI Engine:** OpenRouter (Mistral-Instruct Free Tier) proxied via backend.
-- **Export:** `react-to-print` for professional client-side rendering.
+- **AI Engine:** OpenRouter (Mistral-Instruct) proxied via secure backend routes.
+- **Export:** `react-to-print` for client-side professional rendering.
 
 ## 📁 Project Structure
 
 ```text
 /resume-builder
-  /backend     - Secure AI Proxy, Resume & User APIs, MongoDB Models
-  /frontend    - React Client, Dashboard, Editor & Theme Engine
-  /docs        - Documentation and assets
+  /backend     - Node.js API, MongoDB Models, JWT Auth, AI Proxy
+  /frontend    - React SPA, Dashboard, Pro-Editor, Template Engine
+  /docs        - Architectural docs and visual assets
 ```
 
 ## 🚀 Getting Started
@@ -46,7 +45,7 @@ A premium, open-source, and unlimited Resume Builder Web App. Build professional
    npm install # in both /backend and /frontend
    ```
 2. **Environment:** 
-   - **Backend:** Add `OPENROUTER_API_KEY`, `MONGODB_URI`, `JWT_SECRET` and `HF_TOKEN` to `backend/.env`.
+   - **Backend:** Add `OPENROUTER_API_KEY`, `MONGODB_URI`, `JWT_SECRET` to `backend/.env`.
    - **Frontend:** Add `VITE_API_URL` to `frontend/.env`.
 3. **Run:**
    ```bash
@@ -58,12 +57,11 @@ A premium, open-source, and unlimited Resume Builder Web App. Build professional
 
 ## 📈 Roadmap
 
-- [x] Phase 1-11: Core Infrastructure & Progress Intelligence
-- [x] Phase 12: Auto Resume AI Assistant (OpenRouter)
-- [x] Phase 13: Dynamic Theme System & Visual Engine
-- [x] Phase 14: User Dashboard & Multi-Resume Management
-- [x] Phase 15: Section Management & Custom Sections
-- [ ] Phase 16: Public Sharing & Advanced Export (Next)
+- [x] Phase 1-15: Core Infrastructure & AI Integration
+- [x] Phase 16: **World-Class UI Redesign** (Stripe/Linear Aesthetics)
+- [x] Phase 17: **Global Persistence & Accessibility Fixes**
+- [ ] Phase 18: Public Sharing & Read-only Shareable Links (Next)
+- [ ] Phase 19: Cover Letter Generator & Job Board Integration
 
 ---
-Built with precision by the open-source community.
+Built with absolute precision for the modern workforce.

@@ -1,4 +1,4 @@
-const Resume = require('../models/Resume');
+const Resume = require("../models/Resume");
 
 // @desc    Get all resumes for logged in user
 // @route   GET /api/resumes
@@ -15,12 +15,12 @@ const getResumeById = async (req, res) => {
   const resume = await Resume.findById(req.params.id);
 
   if (!resume) {
-    return res.status(404).json({ message: 'Resume not found' });
+    return res.status(404).json({ message: "Resume not found" });
   }
 
   // Check if resume belongs to user
   if (resume.userId.toString() !== req.user.id) {
-    return res.status(401).json({ message: 'User not authorized' });
+    return res.status(401).json({ message: "User not authorized" });
   }
 
   res.status(200).json(resume);
@@ -34,9 +34,9 @@ const createResume = async (req, res) => {
 
   const resume = await Resume.create({
     userId: req.user.id,
-    title: title || 'Untitled Resume',
+    title: title || "Untitled Resume",
     data: data || {},
-    templateId: templateId || 'minimal-1',
+    templateId: templateId || "minimal-1",
     settings: settings || {},
   });
 
@@ -50,18 +50,18 @@ const updateResume = async (req, res) => {
   const resume = await Resume.findById(req.params.id);
 
   if (!resume) {
-    return res.status(404).json({ message: 'Resume not found' });
+    return res.status(404).json({ message: "Resume not found" });
   }
 
   // Check if resume belongs to user
   if (resume.userId.toString() !== req.user.id) {
-    return res.status(401).json({ message: 'User not authorized' });
+    return res.status(401).json({ message: "User not authorized" });
   }
 
   const updatedResume = await Resume.findByIdAndUpdate(
     req.params.id,
     req.body,
-    { new: true }
+    { new: true },
   );
 
   res.status(200).json(updatedResume);
@@ -74,12 +74,12 @@ const deleteResume = async (req, res) => {
   const resume = await Resume.findById(req.params.id);
 
   if (!resume) {
-    return res.status(404).json({ message: 'Resume not found' });
+    return res.status(404).json({ message: "Resume not found" });
   }
 
   // Check if resume belongs to user
   if (resume.userId.toString() !== req.user.id) {
-    return res.status(401).json({ message: 'User not authorized' });
+    return res.status(401).json({ message: "User not authorized" });
   }
 
   await resume.deleteOne();

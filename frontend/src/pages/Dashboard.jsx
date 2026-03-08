@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, 
   FileText, 
@@ -12,7 +13,11 @@ import {
   Sparkles,
   ChevronRight,
   MoreVertical,
-  Search
+  Search,
+  Moon,
+  Sun,
+  LayoutGrid,
+  FileSearch,
 } from 'lucide-react';
 import useResumeStore from '../store/resumeStore';
 import useAuthStore from '../store/authStore';
@@ -22,6 +27,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { resumes, fetchResumes, deleteResume, resetResume, loading } = useResumeStore();
   const { user, logout } = useAuthStore();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -31,8 +37,14 @@ const Dashboard = () => {
     }
   }, [user, navigate, fetchResumes]);
 
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDarkMode) root.classList.add('dark');
+    else root.classList.remove('dark');
+  }, [isDarkMode]);
+
   const handleCreateNew = () => {
-    resetResume(false); // Full reset for new from scratch
+    resetResume(false);
     navigate('/editor');
   };
 
@@ -45,155 +57,184 @@ const Dashboard = () => {
     navigate('/');
   };
 
+  const sidebarLinks = [
+    { icon: LayoutGrid, label: 'My Resumes', active: true },
+    { icon: FileSearch, label: 'AI Review', active: false },
+    { icon: SettingsIcon, label: 'Settings', active: false },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans flex overflow-hidden">
+    <div className={`min-h-screen flex overflow-hidden font-sans selection:bg-indigo-500/20 transition-colors duration-500 ${isDarkMode ? 'dark bg-[#020617]' : 'bg-[#f8fafc]'}`}>
+      <div className="noise-bg"></div>
+      
       {/* SaaS Sidebar */}
-      <aside className="w-72 bg-white border-r border-gray-100 flex flex-col hidden lg:flex">
-        <div className="p-8 pb-12">
-          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
-              <FileText className="text-white" size={20} />
+      <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col hidden lg:flex relative z-20">
+        <div className="p-6">
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-105">
+              <FileText className="text-white" size={18} />
             </div>
-            <span className="text-xl font-bold tracking-tight">ResumeBuilder</span>
+            <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50 font-heading">
+              Resume<span className="text-indigo-600">Builder</span>
+            </span>
           </div>
         </div>
 
-        <nav className="flex-1 px-4 space-y-1">
-          <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold bg-primary-50 text-primary-600 transition-all">
-            <Layout size={20} />
-            <span>My Resumes</span>
-          </button>
-          <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold text-gray-500 hover:bg-gray-50 transition-all">
-            <Sparkles size={20} />
-            <span>AI Tools</span>
-          </button>
-          <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold text-gray-500 hover:bg-gray-50 transition-all">
-            <SettingsIcon size={20} />
-            <span>Account Settings</span>
-          </button>
+        <nav className="flex-1 px-3 space-y-1 pt-4">
+          {sidebarLinks.map((link) => (
+            <button 
+              key={link.label}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                link.active 
+                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' 
+                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+              }`}
+            >
+              <link.icon size={18} />
+              <span>{link.label}</span>
+            </button>
+          ))}
         </nav>
 
-        <div className="p-6 mt-auto">
-           <div className="p-5 bg-indigo-50 rounded-3xl border border-indigo-100 space-y-3 mb-6">
-              <p className="text-xs font-black text-indigo-900 uppercase tracking-widest flex items-center gap-2">
-                 <Sparkles size={14} /> Pro Feature
+        <div className="p-4 mt-auto space-y-4">
+           <div className="p-4 bg-indigo-600 rounded-2xl relative overflow-hidden group shadow-lg shadow-indigo-500/20">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 blur-2xl rounded-full -mr-12 -mt-12"></div>
+              <p className="text-[10px] font-black text-indigo-100 uppercase tracking-widest flex items-center gap-2 mb-2">
+                 <Sparkles size={12} /> Pro Account
               </p>
-              <p className="text-[11px] text-indigo-700/80 font-bold leading-relaxed">
-                 Unlock unlimited resumes and high-priority AI generations.
+              <p className="text-[11px] text-white font-medium leading-relaxed mb-3">
+                 Unlimited exports and AI-powered reviews.
               </p>
-              <button className="text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1">
-                 Upgrade Now <ChevronRight size={12} />
+              <button className="w-full py-2 bg-white rounded-lg text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:bg-indigo-50 transition-colors">
+                 Upgrade
               </button>
            </div>
 
            <button 
              onClick={handleLogout}
-             className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all"
+             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
            >
-             <LogOut size={20} />
+             <LogOut size={18} />
              <span>Sign Out</span>
            </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <header className="h-20 bg-white/60 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-10 px-8 flex items-center justify-between">
-           <h2 className="text-xl font-black tracking-tight text-gray-900 lg:hidden">ResumeBuilder</h2>
-           <div className="relative max-w-md w-full hidden md:block">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+      <main className="flex-1 overflow-y-auto relative z-10">
+        <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 px-6 flex items-center justify-between">
+           <div className="flex items-center gap-4 lg:hidden">
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                 <FileText className="text-white" size={16} />
+              </div>
+           </div>
+
+           <div className="relative max-w-sm w-full hidden md:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
               <input 
                 type="text" 
-                placeholder="Search resumes..." 
-                className="w-full bg-gray-50 border-none rounded-xl py-2.5 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary-100 transition-all"
+                placeholder="Quick search..." 
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2 pl-10 pr-4 text-xs font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500/30 transition-all outline-none"
               />
            </div>
 
            <div className="flex items-center gap-4">
-              <div className="text-right hidden sm:block">
-                 <p className="text-sm font-black text-gray-900">{user?.name || 'User'}</p>
-                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Free Account</p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary-500 to-indigo-600 p-0.5 shadow-md">
-                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center font-black text-primary-600">
+              <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
+
+              <div className="flex items-center gap-3">
+                 <div className="text-right hidden sm:block">
+                    <p className="text-xs font-bold text-slate-900 dark:text-slate-50">{user?.name || 'User'}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Personal</p>
+                 </div>
+                 <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-white text-sm shadow-md">
                     {user?.name?.[0] || 'U'}
                  </div>
               </div>
            </div>
         </header>
 
-        <div className="p-8 md:p-12 max-w-6xl mx-auto space-y-12">
-           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div>
-                 <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-gray-900 mb-2 text-left">My Resumes</h1>
-                 <p className="text-gray-500 font-medium text-left">Manage and optimize your professional documents.</p>
+        <div className="p-6 md:p-10 max-w-5xl mx-auto">
+           <motion.div 
+             initial={{ opacity: 0, y: 10 }}
+             animate={{ opacity: 1, y: 0 }}
+             className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12"
+           >
+              <div className="text-left">
+                 <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-2 font-heading">My Resumes</h1>
+                 <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Create and manage your professional profiles.</p>
               </div>
-              <Button onClick={handleCreateNew} variant="gradient" size="lg" className="rounded-2xl px-8 shadow-lg shadow-primary-500/20">
-                 <Plus size={20} className="mr-2" /> Create New Resume
+              <Button onClick={handleCreateNew} variant="gradient" className="rounded-xl h-11 px-6 shadow-lg shadow-indigo-500/20 font-bold text-sm">
+                 <Plus size={18} className="mr-2" /> New Resume
               </Button>
-           </div>
+           </motion.div>
 
            {loading ? (
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="h-64 bg-white border border-gray-100 rounded-[2.5rem] animate-pulse"></div>
+                  <div key={i} className="h-48 glass-card rounded-2xl animate-pulse"></div>
                 ))}
              </div>
            ) : resumes.length === 0 ? (
-             <div className="flex flex-col items-center justify-center py-24 bg-white border border-dashed border-gray-200 rounded-[3rem]">
-                <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-300 mb-6">
-                   <FileText size={40} />
+             <motion.div 
+               initial={{ opacity: 0, scale: 0.98 }}
+               animate={{ opacity: 1, scale: 1 }}
+               className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900/40 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl text-center"
+             >
+                <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-300 dark:text-slate-600 mb-6">
+                   <FileText size={32} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">No resumes found</h3>
-                <p className="text-gray-500 font-medium mb-8">Start building your professional profile today.</p>
-                <Button onClick={handleCreateNew} variant="secondary" className="rounded-full px-10">
-                   Create Your First Resume
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-2">No resumes yet</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-8">Start by creating your first professional resume.</p>
+                <Button onClick={handleCreateNew} variant="secondary" className="rounded-xl px-8 border-slate-200 dark:border-slate-800">
+                   Create Resume
                 </Button>
-             </div>
+             </motion.div>
            ) : (
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {resumes.map((resume) => (
-                  <div 
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {resumes.map((resume, idx) => (
+                  <motion.div 
                     key={resume._id} 
-                    className="group bg-white p-8 rounded-[2.5rem] border border-gray-100 hover:border-primary-100 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] transition-all duration-500 relative flex flex-col text-left"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="group bento-card p-6 flex flex-col"
                   >
-                    <div className="absolute top-6 right-6">
-                       <button className="p-2 text-gray-300 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all">
-                          <MoreVertical size={18} />
+                    <div className="flex justify-between items-start mb-6">
+                       <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 transition-transform group-hover:scale-110">
+                          <FileText size={20} />
+                       </div>
+                       <button className="p-1.5 text-slate-300 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all">
+                          <MoreVertical size={16} />
                        </button>
                     </div>
 
-                    <div className="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center text-primary-600 mb-6 group-hover:scale-110 transition-transform duration-500">
-                       <FileText size={28} />
-                    </div>
-
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors text-left truncate pr-8">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-slate-50 mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
                        {resume.title}
                     </h3>
                     
-                    <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">
                        <Clock size={12} />
-                       <span>Updated {new Date(resume.updatedAt).toLocaleDateString()}</span>
+                       <span>{new Date(resume.updatedAt).toLocaleDateString()}</span>
                     </div>
 
-                    <div className="mt-auto flex items-center gap-3">
+                    <div className="mt-auto flex items-center gap-2">
                        <Button 
                          onClick={() => handleEdit(resume._id)}
                          variant="secondary" 
-                         className="flex-1 rounded-xl h-11 text-xs border-gray-100"
+                         className="flex-1 rounded-lg h-9 text-[11px] border-slate-100 dark:border-slate-800 font-bold"
                        >
-                          <Edit3 size={14} className="mr-2" /> Edit
+                          Edit Profile
                        </Button>
                        <button 
                          onClick={() => {
                            if(window.confirm('Delete this resume?')) deleteResume(resume._id);
                          }}
-                         className="w-11 h-11 rounded-xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-100 transition-all"
+                         className="w-9 h-9 rounded-lg border border-slate-100 dark:border-slate-800 flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
                        >
-                          <Trash2 size={16} />
+                          <Trash2 size={14} />
                        </button>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
              </div>
            )}

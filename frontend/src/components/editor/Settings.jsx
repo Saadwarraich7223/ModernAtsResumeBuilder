@@ -40,8 +40,8 @@ const paperSizes = [
 
 const pageMargins = [
   { id: "10mm", name: "Narrow" },
-  { id: "20mm", name: "Standard" },
-  { id: "30mm", name: "Wide" },
+  { id: "12mm", name: "Standard" },
+  { id: "15mm", name: "Wide" },
 ];
 
 const Settings = () => {
