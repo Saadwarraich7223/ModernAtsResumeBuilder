@@ -1,113 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowRight,
-  Search,
-  FileText,
-  ExternalLink,
-  Filter,
-  Layout,
-  Sun,
-  Moon,
-  ChevronRight,
-} from "lucide-react";
+import { ArrowRight, FileText, Layout, ChevronRight } from "lucide-react";
 import Button from "../components/ui/Button";
 import useResumeStore from "../store/resumeStore";
-
-import minimal1 from "../assets/templates/minimal1.png";
-import modern1 from "../assets/templates/modern1.png";
-import creative1 from "../assets/templates/creative1.png";
-import professional1 from "../assets/templates/professional1.png";
-import tech1 from "../assets/templates/tech1.png";
-import classicSerif1 from "../assets/templates/classicSerif1.png";
-import executive1 from "../assets/templates/executive1.png";
-import creativePro1 from "../assets/templates/creativePro1.png";
-import compact1 from "../assets/templates/compact1.png";
-
-const categories = [
-  { id: "all", name: "All Designs" },
-  { id: "modern", name: "Modern" },
-  { id: "minimal", name: "Minimal" },
-  { id: "professional", name: "Corporate" },
-  { id: "creative", name: "Creative" },
-  { id: "tech", name: "Tech & Logic" },
-];
-
-const allTemplates = [
-  {
-    id: "minimal-1",
-    name: "Minimalist Sans",
-    category: "minimal",
-    description: "Clean, simple, and ATS-friendly.",
-    image: minimal1,
-    tag: "Classic",
-  },
-  {
-    id: "modern-1",
-    name: "Modern Executive",
-    category: "modern",
-    description: "Two-column stylish and organized layout.",
-    image: modern1,
-    tag: "Professional",
-  },
-  {
-    id: "creative-1",
-    name: "Creative Canvas",
-    category: "creative",
-    description: "Bold design to stand out from the crowd.",
-    image: creative1,
-    tag: "Stylish",
-  },
-  {
-    id: "creative-pro-1",
-    name: "Designer Pro",
-    category: "creative",
-    description: "High-impact layout with modern patterns.",
-    image: creativePro1,
-    tag: "Impact",
-  },
-  {
-    id: "professional-1",
-    name: "Corporate Pro",
-    category: "professional",
-    description: "Structured layout for experienced professionals.",
-    image: professional1,
-    tag: "ATS-Ready",
-  },
-  {
-    id: "classic-serif-1",
-    name: "Classic Serif",
-    category: "minimal",
-    description: "Traditional academic and legal style.",
-    image: classicSerif1,
-    tag: "Academic",
-  },
-  {
-    id: "executive-1",
-    name: "Executive Elite",
-    category: "professional",
-    description: "Elegant and sophisticated for leadership roles.",
-    image: executive1,
-    tag: "Leadership",
-  },
-  {
-    id: "tech-1",
-    name: "Technologist",
-    category: "tech",
-    description: "Dark-themed, terminal-style layout for developers.",
-    image: tech1,
-    tag: "Developer",
-  },
-  {
-    id: "compact-1",
-    name: "Compact Logic",
-    category: "tech",
-    description: "High-density efficient design for extensive backgrounds.",
-    image: compact1,
-    tag: "Efficient",
-  },
-];
+import { TEMPLATES, TEMPLATE_CATEGORIES } from "../config/templates";
 
 const Templates = () => {
   const navigate = useNavigate();
@@ -123,8 +20,8 @@ const Templates = () => {
 
   const filteredTemplates =
     activeCategory === "all"
-      ? allTemplates
-      : allTemplates.filter((t) => t.category === activeCategory);
+      ? TEMPLATES
+      : TEMPLATES.filter((t) => t.category === activeCategory);
 
   const handleSelect = (id) => {
     setTemplateId(id);
@@ -192,7 +89,7 @@ const Templates = () => {
 
         {/* Categories Bar */}
         <div className="flex flex-wrap justify-center gap-3 mb-16">
-          {categories.map((cat) => (
+          {TEMPLATE_CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}

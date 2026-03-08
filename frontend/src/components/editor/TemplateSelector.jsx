@@ -1,119 +1,9 @@
-import minimal1 from "../../assets/templates/minimal1.png";
-import modern1 from "../../assets/templates/modern1.png";
-import creative1 from "../../assets/templates/creative1.png";
-import professional1 from "../../assets/templates/professional1.png";
-import tech1 from "../../assets/templates/tech1.png";
-import classicSerif1 from "../../assets/templates/classicSerif1.png";
-import executive1 from "../../assets/templates/executive1.png";
-import creativePro1 from "../../assets/templates/creativePro1.png";
-import compact1 from "../../assets/templates/compact1.png";
-
 import {
   CheckCircle2,
   Sparkles,
-  Layout,
-  ShieldCheck,
-  Briefcase,
-  Award,
-  Code,
-  Zap,
-  PenTool,
-  BookOpen,
 } from "lucide-react";
 import useResumeStore from "../../store/resumeStore";
-
-const templates = [
-  {
-    id: "minimal-1",
-    name: "Minimalist",
-    tag: "Classic",
-    description: "Clean, simple, and ATS-friendly.",
-    image: minimal1,
-    icon: ShieldCheck,
-    color: "text-blue-600",
-    bg: "bg-blue-50",
-  },
-  {
-    id: "modern-1",
-    name: "Modern Edge",
-    tag: "Professional",
-    description: "Two-column stylish and organized layout.",
-    image: modern1,
-    icon: Layout,
-    color: "text-indigo-600",
-    bg: "bg-indigo-50",
-  },
-  {
-    id: "creative-1",
-    name: "Creative Canvas",
-    tag: "Stylish",
-    description: "Bold design to stand out from the crowd.",
-    image: creative1,
-    icon: Sparkles,
-    color: "text-purple-600",
-    bg: "bg-purple-50",
-  },
-  {
-    id: "creative-pro-1",
-    name: "Designer Pro",
-    tag: "Impact",
-    description: "Modern patterns and high-impact layouts.",
-    image: creativePro1,
-    icon: PenTool,
-    color: "text-rose-600",
-    bg: "bg-rose-50",
-  },
-  {
-    id: "professional-1",
-    name: "Corporate Pro",
-    tag: "ATS-Ready",
-    description: "Structured layout for formal roles.",
-    image: professional1,
-    icon: Briefcase,
-    color: "text-emerald-600",
-    bg: "bg-emerald-50",
-  },
-  {
-    id: "classic-serif-1",
-    name: "Classic Serif",
-    tag: "Academic",
-    description: "Traditional and elegant serif typography.",
-    image: classicSerif1,
-    icon: BookOpen,
-    color: "text-stone-600",
-    bg: "bg-stone-50",
-  },
-  {
-    id: "executive-1",
-    name: "Executive Elite",
-    tag: "Premium",
-    description: "Elegant design for leadership positions.",
-    image: executive1,
-    icon: Award,
-    color: "text-amber-600",
-    bg: "bg-amber-50",
-  },
-  {
-    id: "tech-1",
-    name: "Technologist",
-    tag: "Developer",
-    description: "Dark-themed layout for software engineers.",
-    image: tech1,
-    icon: Code,
-    color: "text-blue-400",
-    bg: "bg-slate-900",
-  },
-  {
-    id: "compact-1",
-    name: "Compact Logic",
-    tag: "Efficient",
-    description: "High-density design for extensive careers.",
-    image: compact1,
-    icon: Zap,
-    color: "text-rose-600",
-    bg: "bg-rose-50",
-  },
-];
+import { TEMPLATES } from "../../config/templates";
 
 const TemplateSelector = () => {
   const { templateId, setTemplateId } = useResumeStore();
@@ -130,7 +20,7 @@ const TemplateSelector = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-        {templates.map((template) => (
+        {TEMPLATES.map((template) => (
           <button
             key={template.id}
             onClick={() => setTemplateId(template.id)}

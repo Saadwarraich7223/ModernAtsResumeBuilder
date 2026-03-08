@@ -1,8 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import minimal1 from "../assets/templates/minimal1.png";
-import modern1 from "../assets/templates/modern1.png";
-import creative1 from "../assets/templates/creative1.png";
-
 import { Link, useNavigate } from "react-router-dom";
 import {
   motion,
@@ -33,6 +29,7 @@ import Button from "../components/ui/Button";
 import useResumeStore from "../store/resumeStore";
 import useAuthStore from "../store/authStore";
 import useUIStore from "../store/uiStore";
+import { TEMPLATES } from "../config/templates";
 
 // --- REFINED SUB-COMPONENTS ---
 
@@ -560,23 +557,9 @@ const Landing = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-            {[
-              {
-                id: "modern-1",
-                name: "Executive",
-                image: modern1,
-              },
-              {
-                id: "creative-1",
-                name: "Creative",
-                image: creative1,
-              },
-              {
-                id: "minimal-1",
-                name: "Minimal",
-                image: minimal1,
-              },
-            ].map((tpl, idx) => (
+            {TEMPLATES.filter((t) =>
+              ["modern-1", "creative-1", "minimal-1"].includes(t.id)
+            ).map((tpl, idx) => (
               <motion.div
                 key={idx}
                 whileHover={{ y: -4 }}
@@ -605,7 +588,7 @@ const Landing = () => {
                       {tpl.name}
                     </h3>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                      Professional
+                      {tpl.tag}
                     </p>
                   </div>
                   <ArrowRight
