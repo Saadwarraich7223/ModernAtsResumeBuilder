@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import minimal1 from "../assets/templates/minimal1.png";
+import modern1 from "../assets/templates/modern1.png";
+import creative1 from "../assets/templates/creative1.png";
+
 import { Link, useNavigate } from "react-router-dom";
 import {
   motion,
@@ -28,6 +32,7 @@ import {
 import Button from "../components/ui/Button";
 import useResumeStore from "../store/resumeStore";
 import useAuthStore from "../store/authStore";
+import useUIStore from "../store/uiStore";
 
 // --- REFINED SUB-COMPONENTS ---
 
@@ -106,7 +111,7 @@ const Landing = () => {
   const navigate = useNavigate();
   const { setTemplateId, resetResume } = useResumeStore();
   const { user } = useAuthStore();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useUIStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -118,16 +123,6 @@ const Landing = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Consistently handle the theme toggle
-  useEffect(() => {
-    const root = window.document.documentElement;
-    if (isDarkMode) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-  }, [isDarkMode]);
 
   const handleSelectTemplate = (id) => {
     resetResume();
@@ -183,7 +178,7 @@ const Landing = () => {
               ))}
               <div className="h-4 w-px bg-slate-200 dark:bg-slate-800"></div>
               <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
+                onClick={toggleDarkMode}
                 className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
               >
                 {isDarkMode ? (
@@ -212,20 +207,28 @@ const Landing = () => {
                       className="rounded-xl px-5 h-9 font-bold text-xs shadow-sm"
                       onClick={handleGetStarted}
                     >
-                      Get Started
+                      {user ? "Dashboard" : "Get Started"}
                     </Button>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {!isScrolled && (
-                <Link
-                  to="/login"
-                  className="text-xs font-bold text-slate-900 dark:text-slate-50 uppercase tracking-widest"
-                >
-                  Sign In
-                </Link>
-              )}
+              {!isScrolled &&
+                (user ? (
+                  <Link
+                    to="/dashboard"
+                    className="text-xs font-bold text-slate-900 dark:text-slate-50 uppercase tracking-widest"
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="text-xs font-bold text-slate-900 dark:text-slate-50 uppercase tracking-widest"
+                  >
+                    Sign In
+                  </Link>
+                ))}
             </div>
 
             <button
@@ -264,7 +267,7 @@ const Landing = () => {
                 className="rounded-2xl h-14"
                 onClick={handleGetStarted}
               >
-                Get Started
+                {user ? "Go to Dashboard" : "Get Started"}
               </Button>
             </div>
           </motion.div>
@@ -302,7 +305,8 @@ const Landing = () => {
                 onClick={handleGetStarted}
                 className="shadow-lg shadow-indigo-500/20"
               >
-                Get Started Free <ArrowRight size={18} className="ml-2" />
+                {user ? "Go to Dashboard" : "Get Started Free"}{" "}
+                <ArrowRight size={18} className="ml-2" />
               </MagneticButton>
               <Button
                 variant="secondary"
@@ -325,7 +329,7 @@ const Landing = () => {
             className="relative max-w-4xl mx-auto pt-10"
           >
             {/* Added a subtle background glow for visibility */}
-            <div className="absolute inset-0 bg-indigo-500/50 dark:bg-indigo-500/10 blur-[80px] rounded-[3rem] -z-10"></div>
+            <div className="absolute inset-0 bg-indigo-500/50 dark:bg-indigo-500/20 blur-[80px] rounded-[3rem] -z-10"></div>
 
             <div className="relative rounded-2xl border border-slate-400 dark:border-slate-700 bg-white/50 dark:bg-slate-950 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.35)] overflow-hidden">
               {/* Browser Header */}
@@ -560,20 +564,17 @@ const Landing = () => {
               {
                 id: "modern-1",
                 name: "Executive",
-                image:
-                  "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=600&h=800",
+                image: modern1,
               },
               {
                 id: "creative-1",
                 name: "Creative",
-                image:
-                  "https://images.unsplash.com/photo-1626197031507-c17099753214?q=80&w=600&h=800",
+                image: creative1,
               },
               {
                 id: "minimal-1",
                 name: "Minimal",
-                image:
-                  "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?q=80&w=600&h=800",
+                image: minimal1,
               },
             ].map((tpl, idx) => (
               <motion.div
@@ -587,7 +588,7 @@ const Landing = () => {
                   <img
                     src={tpl.image}
                     alt={tpl.name}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                    className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700"
                   />
                   <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-8">
                     <Button
@@ -642,7 +643,7 @@ const Landing = () => {
                 onClick={handleGetStarted}
                 className="bg-white !from-white !to-white text-slate-950 shadow-xl shadow-white/5"
               >
-                Build My Resume Now
+                {user ? "Go to My Dashboard" : "Build My Resume Now"}
               </MagneticButton>
             </div>
           </motion.div>
