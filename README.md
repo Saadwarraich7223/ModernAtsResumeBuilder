@@ -2,7 +2,11 @@
 
 A world-class, open-source, and unlimited Resume Builder Web App. Redesigned with a premium SaaS aesthetic (Stripe/Linear style), featuring a high-performance editor, AI-powered content generation, and pixel-perfect templates.
 
-![Landing Preview](https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=1200)
+![Landing Preview]
+DARK THEME
+<img src="/frontend/src/assets/landingPageLight.png" alt="Template Preview" width="300" />
+LIGHT THEME
+<img src="/frontend/src/assets/landingPageLight.png" alt="Template Preview" width="300" />
 
 ## ✨ Features
 
@@ -40,11 +44,12 @@ A world-class, open-source, and unlimited Resume Builder Web App. Redesigned wit
 ## 🚀 Getting Started
 
 ### Setup
+
 1. **Clone & Install:**
    ```bash
    npm install # in both /backend and /frontend
    ```
-2. **Environment:** 
+2. **Environment:**
    - **Backend:** Add `OPENROUTER_API_KEY`, `MONGODB_URI`, `JWT_SECRET` to `backend/.env`.
    - **Frontend:** Add `VITE_API_URL` to `frontend/.env`.
 3. **Run:**
@@ -64,4 +69,5 @@ A world-class, open-source, and unlimited Resume Builder Web App. Redesigned wit
 - [ ] Phase 19: Cover Letter Generator & Job Board Integration
 
 ---
+
 Built with absolute precision for the modern workforce.
